@@ -1,0 +1,23 @@
+{
+  "name": "Medicine Tracker",
+  "short_name": "MedTrack",
+  "description": "Track your daily medicine intake",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e1e1c",
+  "theme_color": "#1D9E75",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MedTrack">
+<link rel="apple-touch-icon" href="/icon-192.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicine Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg2: #f5f5f3;
+      --bg3: #eeede9;
+      --text: #1a1a18;
+      --text2: #6b6b67;
+      --text3: #9e9d99;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --green: #1D9E75;
+      --green-dark: #0F6E56;
+      --green-light: #E1F5EE;
+      --green-text: #085041;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1c;
+        --bg2: #282826;
+        --bg3: #323230;
+        --text: #f0efeb;
+        --text2: #a0a09c;
+        --text3: #686864;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+        --green-light: #04342C;
+        --green-text: #9FE1CB;
+      }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg3);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 2rem 1rem 5rem;
+    }
+    .header { margin-bottom: 1.5rem; }
+    .header h1 { font-size: 26px; font-weight: 600; color: var(--text); }
+    .header p { font-size: 14px; color: var(--text2); margin-top: 4px; }
+    .date-bar { font-size: 11px; color: var(--text3); margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .notif-banner {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: var(--radius-md); margin-bottom: 1rem;
+      font-size: 13px;
+    }
+    .notif-banner.warn { background: #FAEEDA; color: #633806; border: 0.5px solid #FAC775; }
+    .notif-banner.ok { background: var(--green-light); color: var(--green-text); border: 0.5px solid #9FE1CB; }
+    .notif-btn {
+      font-size: 12px; font-weight: 500; border: 1.5px solid currentColor;
+      border-radius: 20px; padding: 3px 12px; background: transparent;
+      cursor: pointer; color: inherit; margin-left: auto; flex-shrink: 0;
+    }
+
+    .stats { display: flex; gap: 10px; margin-bottom: 0.5rem; }
+    .stat { flex: 1; background: var(--bg2); border-radius: var(--radius-md); padding: 0.7rem 1rem; }
+    .stat-num { font-size: 24px; font-weight: 600; color: var(--text); }
+    .stat-lbl { font-size: 12px; color: var(--text2); margin-top: 1px; }
+
+    .progress-bar { height: 5px; border-radius: 3px; background: var(--bg3); margin: 0.4rem 0 0; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; background: var(--green); transition: width 0.4s ease; }
+
+    .section-title {
+      font-size: 11px; font-weight: 600; color: var(--text2);
+      letter-spacing: 0.07em; text-transform: uppercase;
+      margin: 1.5rem 0 0.6rem;
+    }
+
+    .card {
+      background: var(--bg); border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.5rem;
+    }
+    .med-row { display: flex; align-items: center; gap: 12px; }
+    .med-checkbox {
+      width: 24px; height: 24px; border: 1.5px solid var(--border2);
+      border-radius: 50%; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; background: transparent;
+    }
+    .med-checkbox.done { background: var(--green); border-color: var(--green); }
+    .med-checkbox.done::after {
+      content: ''; width: 6px; height: 11px;
+      border: 2px solid #fff; border-top: none; border-left: none;
+      transform: rotate(45deg) translateY(-1px); display: block;
+    }
+    .med-info { flex: 1; min-width: 0; }
+    .med-name { font-size: 15px; font-weight: 500; color: var(--text); }
+    .med-name.done { color: var(--text3); text-decoration: line-through; }
+    .med-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+    .med-sub.done { color: var(--text3); }
+    .med-time-badge {
+      font-size: 12px; padding: 3px 10px; border-radius: 20px;
+      background: var(--green-light); color: var(--green-text);
+      font-weight: 500; flex-shrink: 0; white-space: nowrap;
+    }
+    .med-time-badge.done { background: var(--bg2); color: var(--text3); }
+    .med-delete {
+      width: 30px; height: 30px; border: none; background: transparent;
+      cursor: pointer; color: var(--text3); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; flex-shrink: 0; transition: background 0.1s;
+    }
+    .med-delete:hover { background: var(--bg2); color: #e24b4a; }
+
+    .empty-state {
+      text-align: center; padding: 2.5rem 1rem; color: var(--text2); font-size: 14px;
+      border: 0.5px dashed var(--border2); border-radius: var(--radius-lg);
+    }
+    .empty-state span { display: block; font-size: 32px; margin-bottom: 8px; }
+
+    #toggle-form {
+      width: 100%; height: 40px; border: 0.5px solid var(--border2);
+      background: transparent; color: var(--text); font-size: 14px;
+      border-radius: var(--radius-md); cursor: pointer; transition: background 0.1s;
+    }
+    #toggle-form:hover { background: var(--bg2); }
+
+    .add-form {
+      border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem; background: var(--bg2); margin-top: 8px;
+    }
+    .form-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .form-row input, .form-row select {
+      flex: 1; min-width: 130px; font-size: 14px; padding: 0 10px; height: 38px;
+      border: 0.5px solid var(--border2); border-radius: var(--radius-md);
+      background: var(--bg); color: var(--text); outline: none;
+    }
+    .form-row input:focus, .form-row select:focus { border-color: var(--green); }
+    .btn-add {
+      width: 100%; height: 40px; border: none; background: var(--green);
+      color: #fff; font-size: 14px; font-weight: 600; border-radius: var(--radius-md);
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-add:hover { background: var(--green-dark); }
+
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: #1a1a18; color: #fff; padding: 10px 22px; border-radius: 20px;
+      font-size: 14px; font-weight: 500; z-index: 999;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 400px) {
+      .stats { flex-direction: column; }
+      .form-row input, .form-row select { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <h1>Medicine Tracker</h1>
+    <p>Your daily reminders, all in one place.</p>
+    <div class="date-bar" id="date-bar"></div>
+  </div>
+
+  <div id="notif-banner"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="stat-taken">0</div><div class="stat-lbl">taken today</div></div>
+    <div class="stat"><div class="stat-num" id="stat-remaining">0</div><div class="stat-lbl">remaining</div></div>
+    <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl">total medicines</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="section-title">Today's schedule</div>
+  <div id="med-list"></div>
+
+  <div class="section-title">Add a medicine</div>
+  <button id="toggle-form">+ Add new medicine</button>
+  <div id="add-form-container" style="display:none;">
+    <div class="add-form">
+      <div class="form-row">
+        <input type="text" id="inp-name" placeholder="Medicine name (e.g. BP Medicine)" />
+      </div>
+      <div class="form-row">
+        <input type="text" id="inp-dose" placeholder="Dosage (e.g. 500mg, 1 tablet)" />
+        <input type="time" id="inp-time" />
+      </div>
+      <button class="btn-add" id="btn-add">Add medicine</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  const STORAGE_KEY_MEDS = 'medtracker_medicines';
+  const STORAGE_KEY_TAKEN_PREFIX = 'medtracker_taken_';
+  const STORAGE_KEY_SNOOZED = 'medtracker_snoozed';
+
+  let medicines = [];
+  let takenToday = {};
+  let snoozedMeds = {};
+  let todayKey = '';
+  let alreadyNotified = new Set();
+  let checkInterval = null;
+  let swRegistration = null;
+
+  // Register Service Worker
+  async function registerServiceWorker() {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      try {
+        swRegistration = await navigator.serviceWorker.register('/sw.js');
+        console.log('Service Worker registered');
+        
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener('message', event => {
+          if (event.data.type === 'MARK_TAKEN') {
+            const med = medicines.find(m => m.id === event.data.medicineId);
+            if (med && !takenToday[med.id]) {
+              toggleMed(med.id);
+            }
+          } else if (event.data.type === 'SNOOZE') {
+            snoozedMeds[event.data.medicineId] = event.data.snoozeTime;
+            localStorage.setItem(STORAGE_KEY_SNOOZED, JSON.stringify(snoozedMeds));
+          }
+        });
+        
+        return true;
+      } catch (error) {
+        console.log('Service Worker registration failed:', error);
+        return false;
+      }
+    }
+    return false;
+  }
+
+  // Subscribe to push notifications
+  async function subscribeToPush() {
+    if (!swRegistration) return false;
+    
+    try {
+      const subscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: null // For demo - in production, use VAPID keys
+      });
+      
+      // Store subscription on your server (optional)
+      console.log('Push subscription:', subscription);
+      return true;
+    } catch (error) {
+      console.log('Push subscription failed:', error);
+      return false;
+    }
+  }
+
+  function getTodayKey() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function fmt12(time24) {
+    if (!time24) return '';
+    const [h, m] = time24.split(':').map(Number);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.22, 0.44].forEach((delay, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.type = 'sine';
+        o.frequency.value = 520 + i * 80;
+        g.gain.setValueAtTime(0.45, ctx.currentTime + delay);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.38);
+        o.start(ctx.currentTime + delay);
+        o.stop(ctx.currentTime + delay + 0.42);
+      });
+    } catch (e) {}
+  }
+
+  function sendBrowserNotif(name, dose, time24, id) {
+    if (swRegistration) {
+      // Use service worker for background notifications
+      swRegistration.showNotification('Time to take your medicine 💊', {
+        body: `${name}${dose ? ' — ' + dose : ''} scheduled at ${fmt12(time24)}`,
+        icon: '/icon-192.png',
+        badge: '/badge-72.png',
+        vibrate: [200, 100, 200],
+        tag: 'med-' + id,
+        data: {
+          medicineId: id,
+          url: '/'
+        },
+        actions: [
+          {
+            action: 'take',
+            title: '✓ Mark as taken'
+          },
+          {
+            action: 'snooze',
+            title: '⏰ Snooze 10 min'
+          }
+        ]
+      });
+    } else if (Notification.permission === 'granted') {
+      // Fallback to regular notification
+      try {
+        new Notification('Time to take your medicine 💊', {
+          body: `${name}${dose ? ' — ' + dose : ''} scheduled at ${fmt12(time24)}`,
+          tag: 'med-' + name + '-' + time24,
+        });
+      } catch (e) {}
+    }
+  }
+
+  function loadData() {
+    todayKey = getTodayKey();
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_MEDS);
+      medicines = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      medicines = [];
+    }
+    try {
+      const raw2 = localStorage.getItem(STORAGE_KEY_TAKEN_PREFIX + todayKey);
+      takenToday = raw2 ? JSON.parse(raw2) : {};
+    } catch (e) {
+      takenToday = {};
+    }
+    try {
+      const raw3 = localStorage.getItem(STORAGE_KEY_SNOOZED);
+      snoozedMeds = raw3 ? JSON.parse(raw3) : {};
+      // Clean up expired snoozes
+      const now = Date.now();
+      Object.keys(snoozedMeds).forEach(key => {
+        if (snoozedMeds[key] < now) {
+          delete snoozedMeds[key];
+        }
+      });
+    } catch (e) {
+      snoozedMeds = {};
+    }
+    render();
+    startChecker();
+  }
+
+  function saveMeds() {
+    localStorage.setItem(STORAGE_KEY_MEDS, JSON.stringify(medicines));
+  }
+
+  function saveTaken() {
+    localStorage.setItem(STORAGE_KEY_TAKEN_PREFIX + todayKey, JSON.stringify(takenToday));
+  }
+
+  function sortedMeds() {
+    return [...medicines].sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+  }
+
+  function render() {
+    const key = getTodayKey();
+    if (key !== todayKey) {
+      todayKey = key;
+      takenToday = {};
+      saveTaken();
+      alreadyNotified.clear();
+    }
+
+    const meds = sortedMeds();
+    const takenCount = meds.filter(m => takenToday[m.id]).length;
+    const remaining = meds.length - takenCount;
+    const pct = meds.length ? Math.round((takenCount / meds.length) * 100) : 0;
+
+    document.getElementById('stat-taken').textContent = takenCount;
+    document.getElementById('stat-remaining').textContent = remaining;
+    document.getElementById('stat-total').textContent = meds.length;
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    const now = new Date();
+    document.getElementById('date-bar').textContent = now.toLocaleDateString('en-IN', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    }).toUpperCase();
+
+    const list = document.getElementById('med-list');
+    if (meds.length === 0) {
+      list.innerHTML = '<div class="empty-state"><span>&#128138;</span>No medicines added yet.<br>Add your first one below.</div>';
+    } else {
+      list.innerHTML = meds.map(m => {
+        const done = !!takenToday[m.id];
+        return `<div class="card">
+          <div class="med-row">
+            <div class="med-checkbox ${done ? 'done' : ''}" onclick="toggleMed('${m.id}')" title="${done ? 'Mark as not taken' : 'Mark as taken'}"></div>
+            <div class="med-info">
+              <div class="med-name ${done ? 'done' : ''}">${escHtml(m.name)}</div>
+              <div class="med-sub ${done ? 'done' : ''}">${escHtml(m.dose || 'No dosage specified')}</div>
+            </div>
+            <div class="med-time-badge ${done ? 'done' : ''}">${fmt12(m.time) || 'No time'}</div>
+            <button class="med-delete" onclick="deleteMed('${m.id}')" title="Remove medicine">&#10005;</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  window.toggleMed = function (id) {
+    if (takenToday[id]) {
+      delete takenToday[id];
+      showToast('Marked as not taken');
+    } else {
+      takenToday[id] = Date.now();
+      const m = medicines.find(x => x.id === id);
+      if (m) {
+        playBeep();
+        showToast('Marked ' + m.name + ' as taken \u2713');
+        
+        // Clear any snooze for this medicine
+        if (snoozedMeds[id]) {
+          delete snoozedMeds[id];
+          localStorage.setItem(STORAGE_KEY_SNOOZED, JSON.stringify(snoozedMeds));
+        }
+      }
+    }
+    saveTaken();
+    render();
+  };
+
+  window.deleteMed = function (id) {
+    const m = medicines.find(x => x.id === id);
+    medicines = medicines.filter(x => x.id !== id);
+    delete takenToday[id];
+    delete snoozedMeds[id];
+    saveMeds();
+    saveTaken();
+    localStorage.setItem(STORAGE_KEY_SNOOZED, JSON.stringify(snoozedMeds));
+    if (m) showToast(m.name + ' removed');
+    render();
+  };
+
+  function setupNotifBanner() {
+    const el = document.getElementById('notif-banner');
+    if (!('Notification' in window)) {
+      el.innerHTML = '';
+      return;
+    }
+    
+    if (Notification.permission === 'granted') {
+      if (swRegistration) {
+        el.innerHTML = '<div class="notif-banner ok">✓ Background notifications active. Install app for best experience!</div>';
+      } else {
+        el.innerHTML = '<div class="notif-banner ok">Notifications are enabled. Install app for background alerts!</div>';
+      }
+    } else if (Notification.permission === 'denied') {
+      el.innerHTML = '<div class="notif-banner warn">Notifications are blocked. Enable them in your browser settings to receive alerts.</div>';
+    } else {
+      el.innerHTML = '<div class="notif-banner warn">Enable notifications to get medicine reminders<button class="notif-btn" onclick="askNotif()">Enable</button></div>';
+    }
+  }
+
+  window.askNotif = async function () {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      if (swRegistration) {
+        await subscribeToPush();
+      }
+      showToast('Notifications enabled! You can now install the app for background alerts.');
+    }
+    setupNotifBanner();
+  };
+
+  function startChecker() {
+    if (checkInterval) clearInterval(checkInterval);
+    checkInterval = setInterval(checkAlarms, 20000);
+    checkAlarms();
+  }
+
+  function checkAlarms() {
+    const key = getTodayKey();
+    if (key !== todayKey) {
+      todayKey = key;
+      takenToday = {};
+      saveTaken();
+      alreadyNotified.clear();
+      render();
+      return;
+    }
+    
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    
+    medicines.forEach(m => {
+      if (!m.time || takenToday[m.id]) return;
+      
+      // Check if medicine is snoozed
+      if (snoozedMeds[m.id] && snoozedMeds[m.id] > Date.now()) return;
+      
+      const notifKey = m.id + '_' + todayKey + '_' + m.time;
+      if (alreadyNotified.has(notifKey)) return;
+      
+      const [mh, mmin] = m.time.split(':').map(Number);
+      const medicineTime = mh * 60 + mmin;
+      const diff = currentTime - medicineTime;
+      
+      if (diff >= 0 && diff < 2) {
+        alreadyNotified.add(notifKey);
+        playBeep();
+        sendBrowserNotif(m.name, m.dose, m.time, m.id);
+        showToast('Time to take ' + m.name + '!');
+      }
+    });
+  }
+
+  // Install prompt handler
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install button
+    const installBtn = document.createElement('button');
+    installBtn.id = 'install-btn';
+    installBtn.textContent = '📱 Install App';
+    installBtn.className = 'notif-btn';
+    installBtn.style.marginTop = '10px';
+    
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('Thank you for installing!');
+      }
+      deferredPrompt = null;
+      installBtn.remove();
+    });
+    
+    document.querySelector('.header').appendChild(installBtn);
+  });
+
+  document.getElementById('toggle-form').addEventListener('click', function () {
+    const fc = document.getElementById('add-form-container');
+    const shown = fc.style.display !== 'none';
+    fc.style.display = shown ? 'none' : 'block';
+    this.textContent = shown ? '+ Add new medicine' : '– Close form';
+  });
+
+  document.getElementById('btn-add').addEventListener('click', function () {
+    const name = document.getElementById('inp-name').value.trim();
+    const dose = document.getElementById('inp-dose').value.trim();
+    const time = document.getElementById('inp-time').value;
+    if (!name) { showToast('Please enter a medicine name'); return; }
+    if (!time) { showToast('Please set a reminder time'); return; }
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    medicines.push({ id, name, dose, time });
+    saveMeds();
+    document.getElementById('inp-name').value = '';
+    document.getElementById('inp-dose').value = '';
+    document.getElementById('inp-time').value = '';
+    document.getElementById('add-form-container').style.display = 'none';
+    document.getElementById('toggle-form').textContent = '+ Add new medicine';
+    showToast(name + ' added!');
+    render();
+  });
+
+  // Initialize
+  (async function init() {
+    const hasSW = await registerServiceWorker();
+    if (hasSW && Notification.permission === 'granted') {
+      await subscribeToPush();
+    }
+    setupNotifBanner();
+    loadData();
+  })();
+})();
+</script>
+</body>
+</html>

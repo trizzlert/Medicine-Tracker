@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="manifest" href="/manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MedTrack">
-<link rel="apple-touch-icon" href="/icon-192.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Medicine Tracker</title>
+  <title>Medicine Tracker - WhatsApp Reminders</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -26,6 +21,8 @@
       --green-dark: #0F6E56;
       --green-light: #E1F5EE;
       --green-text: #085041;
+      --whatsapp: #25D366;
+      --whatsapp-dark: #128C7E;
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -64,10 +61,28 @@
     }
     .notif-banner.warn { background: #FAEEDA; color: #633806; border: 0.5px solid #FAC775; }
     .notif-banner.ok { background: var(--green-light); color: var(--green-text); border: 0.5px solid #9FE1CB; }
+    .notif-banner.whatsapp { background: #DCF8C6; color: #075E54; border: 0.5px solid #25D366; }
     .notif-btn {
       font-size: 12px; font-weight: 500; border: 1.5px solid currentColor;
       border-radius: 20px; padding: 3px 12px; background: transparent;
       cursor: pointer; color: inherit; margin-left: auto; flex-shrink: 0;
+    }
+    .whatsapp-btn {
+      background: var(--whatsapp);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .whatsapp-btn.small {
+      padding: 4px 12px;
+      font-size: 12px;
     }
 
     .stats { display: flex; gap: 10px; margin-bottom: 0.5rem; }
@@ -87,6 +102,10 @@
     .card {
       background: var(--bg); border: 0.5px solid var(--border);
       border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .card.overdue {
+      border-left: 4px solid #ff6b6b;
     }
     .med-row { display: flex; align-items: center; gap: 12px; }
     .med-checkbox {
@@ -112,6 +131,19 @@
       font-weight: 500; flex-shrink: 0; white-space: nowrap;
     }
     .med-time-badge.done { background: var(--bg2); color: var(--text3); }
+    .med-time-badge.overdue { background: #ff6b6b; color: white; }
+    .med-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .med-whatsapp {
+      width: 30px; height: 30px; border: none; background: var(--whatsapp);
+      color: white; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all 0.2s;
+    }
+    .med-whatsapp:hover { background: var(--whatsapp-dark); transform: scale(1.1); }
     .med-delete {
       width: 30px; height: 30px; border: none; background: transparent;
       cursor: pointer; color: var(--text3); font-size: 16px;
@@ -151,6 +183,108 @@
     }
     .btn-add:hover { background: var(--green-dark); }
 
+    /* Floating reminder */
+    .reminder-floating {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg);
+      border: 2px solid var(--whatsapp);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+      min-width: 300px;
+      max-width: 90%;
+    }
+
+    @keyframes slideUp {
+      from { transform: translate(-50%, 100px); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
+
+    .reminder-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .reminder-icon {
+      font-size: 24px;
+    }
+
+    .reminder-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .reminder-body {
+      margin-bottom: 16px;
+      padding: 8px;
+      background: var(--bg2);
+      border-radius: 8px;
+    }
+
+    .reminder-med {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .reminder-dose {
+      color: var(--text2);
+      font-size: 13px;
+    }
+
+    .reminder-time {
+      color: var(--whatsapp);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .reminder-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .reminder-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reminder-btn.whatsapp {
+      background: var(--whatsapp);
+      color: white;
+    }
+
+    .reminder-btn.whatsapp:hover {
+      background: var(--whatsapp-dark);
+    }
+
+    .reminder-btn.take {
+      background: var(--green);
+      color: white;
+    }
+
+    .reminder-btn.take:hover {
+      background: var(--green-dark);
+    }
+
+    .reminder-btn.close {
+      background: var(--bg2);
+      color: var(--text2);
+    }
+
     .toast {
       position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
       background: #1a1a18; color: #fff; padding: 10px 22px; border-radius: 20px;
@@ -158,6 +292,46 @@
       opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
     }
     .toast.show { opacity: 1; }
+
+    /* Install banner */
+    .install-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--whatsapp);
+      color: white;
+      padding: 12px;
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+    }
+
+    .install-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 520px;
+      margin: 0 auto;
+      gap: 10px;
+    }
+
+    .install-btn {
+      background: white;
+      color: var(--whatsapp);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
 
     @media (max-width: 400px) {
       .stats { flex-direction: column; }
@@ -169,7 +343,7 @@
 <div class="app" id="app">
   <div class="header">
     <h1>Medicine Tracker</h1>
-    <p>Your daily reminders, all in one place.</p>
+    <p>💊 WhatsApp reminders • always on time</p>
     <div class="date-bar" id="date-bar"></div>
   </div>
 
@@ -207,63 +381,19 @@
 (function () {
   const STORAGE_KEY_MEDS = 'medtracker_medicines';
   const STORAGE_KEY_TAKEN_PREFIX = 'medtracker_taken_';
-  const STORAGE_KEY_SNOOZED = 'medtracker_snoozed';
+  const STORAGE_KEY_WA_NUMBER = 'medtracker_whatsapp';
 
   let medicines = [];
   let takenToday = {};
-  let snoozedMeds = {};
   let todayKey = '';
   let alreadyNotified = new Set();
   let checkInterval = null;
-  let swRegistration = null;
+  let whatsappNumber = '';
 
-  // Register Service Worker
-  async function registerServiceWorker() {
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      try {
-        swRegistration = await navigator.serviceWorker.register('/sw.js');
-        console.log('Service Worker registered');
-        
-        // Listen for messages from service worker
-        navigator.serviceWorker.addEventListener('message', event => {
-          if (event.data.type === 'MARK_TAKEN') {
-            const med = medicines.find(m => m.id === event.data.medicineId);
-            if (med && !takenToday[med.id]) {
-              toggleMed(med.id);
-            }
-          } else if (event.data.type === 'SNOOZE') {
-            snoozedMeds[event.data.medicineId] = event.data.snoozeTime;
-            localStorage.setItem(STORAGE_KEY_SNOOZED, JSON.stringify(snoozedMeds));
-          }
-        });
-        
-        return true;
-      } catch (error) {
-        console.log('Service Worker registration failed:', error);
-        return false;
-      }
-    }
-    return false;
-  }
-
-  // Subscribe to push notifications
-  async function subscribeToPush() {
-    if (!swRegistration) return false;
-    
-    try {
-      const subscription = await swRegistration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: null // For demo - in production, use VAPID keys
-      });
-      
-      // Store subscription on your server (optional)
-      console.log('Push subscription:', subscription);
-      return true;
-    } catch (error) {
-      console.log('Push subscription failed:', error);
-      return false;
-    }
-  }
+  // Load WhatsApp number if saved
+  try {
+    whatsappNumber = localStorage.getItem(STORAGE_KEY_WA_NUMBER) || '';
+  } catch (e) {}
 
   function getTodayKey() {
     return new Date().toISOString().slice(0, 10);
@@ -302,39 +432,61 @@
     } catch (e) {}
   }
 
-  function sendBrowserNotif(name, dose, time24, id) {
-    if (swRegistration) {
-      // Use service worker for background notifications
-      swRegistration.showNotification('Time to take your medicine 💊', {
-        body: `${name}${dose ? ' — ' + dose : ''} scheduled at ${fmt12(time24)}`,
-        icon: '/icon-192.png',
-        badge: '/badge-72.png',
-        vibrate: [200, 100, 200],
-        tag: 'med-' + id,
-        data: {
-          medicineId: id,
-          url: '/'
-        },
-        actions: [
-          {
-            action: 'take',
-            title: '✓ Mark as taken'
-          },
-          {
-            action: 'snooze',
-            title: '⏰ Snooze 10 min'
-          }
-        ]
-      });
-    } else if (Notification.permission === 'granted') {
-      // Fallback to regular notification
-      try {
-        new Notification('Time to take your medicine 💊', {
-          body: `${name}${dose ? ' — ' + dose : ''} scheduled at ${fmt12(time24)}`,
-          tag: 'med-' + name + '-' + time24,
-        });
-      } catch (e) {}
+  // WhatsApp reminder function
+  function sendWhatsAppReminder(medicine, customMessage = null) {
+    if (!whatsappNumber) {
+      // Ask for WhatsApp number
+      const number = prompt('📱 Enter your WhatsApp number (with country code, e.g., 919876543210):', whatsappNumber);
+      if (number) {
+        whatsappNumber = number.replace(/\D/g, '');
+        localStorage.setItem(STORAGE_KEY_WA_NUMBER, whatsappNumber);
+      } else {
+        showToast('Please add your WhatsApp number for reminders');
+        return false;
+      }
     }
+
+    const message = customMessage || `⏰ *Medicine Reminder*%0A%0A💊 *${medicine.name}*%0A📋 Dose: ${medicine.dose || 'Take now'}%0A⏱️ Time: ${fmt12(medicine.time)}%0A%0A✓ Tap "Mark as taken" in the app when done!`;
+    
+    // Open WhatsApp
+    const waLink = `https://wa.me/${whatsappNumber}?text=${message}`;
+    window.open(waLink, '_blank');
+    
+    showToast(`WhatsApp reminder sent for ${medicine.name}`);
+    return true;
+  }
+
+  function showReminderPopup(medicine) {
+    const reminderDiv = document.createElement('div');
+    reminderDiv.className = 'reminder-floating';
+    reminderDiv.innerHTML = `
+      <div class="reminder-header">
+        <span class="reminder-icon">⏰</span>
+        <span class="reminder-title">Time for medicine!</span>
+      </div>
+      <div class="reminder-body">
+        <div class="reminder-med">${medicine.name}</div>
+        <div class="reminder-dose">${medicine.dose || 'Take now'}</div>
+        <div class="reminder-time">Scheduled at ${fmt12(medicine.time)}</div>
+      </div>
+      <div class="reminder-buttons">
+        <button class="reminder-btn take" onclick="toggleMed('${medicine.id}'); this.closest('.reminder-floating').remove()">
+          ✓ Mark taken
+        </button>
+        <button class="reminder-btn whatsapp" onclick="sendWhatsAppReminder(${JSON.stringify(medicine).replace(/"/g, '&quot;')}); this.closest('.reminder-floating').remove()">
+          💬 WhatsApp
+        </button>
+        <button class="reminder-btn close" onclick="this.closest('.reminder-floating').remove()">
+          ✕
+        </button>
+      </div>
+    `;
+    document.body.appendChild(reminderDiv);
+
+    // Auto remove after 2 minutes
+    setTimeout(() => {
+      if (reminderDiv.parentNode) reminderDiv.remove();
+    }, 120000);
   }
 
   function loadData() {
@@ -351,19 +503,6 @@
     } catch (e) {
       takenToday = {};
     }
-    try {
-      const raw3 = localStorage.getItem(STORAGE_KEY_SNOOZED);
-      snoozedMeds = raw3 ? JSON.parse(raw3) : {};
-      // Clean up expired snoozes
-      const now = Date.now();
-      Object.keys(snoozedMeds).forEach(key => {
-        if (snoozedMeds[key] < now) {
-          delete snoozedMeds[key];
-        }
-      });
-    } catch (e) {
-      snoozedMeds = {};
-    }
     render();
     startChecker();
   }
@@ -378,6 +517,15 @@
 
   function sortedMeds() {
     return [...medicines].sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+  }
+
+  function isOverdue(medicine) {
+    if (!medicine.time || takenToday[medicine.id]) return false;
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const [mh, mmin] = medicine.time.split(':').map(Number);
+    const medicineTime = mh * 60 + mmin;
+    return (currentTime - medicineTime) > 30; // Overdue by 30+ minutes
   }
 
   function render() {
@@ -410,15 +558,22 @@
     } else {
       list.innerHTML = meds.map(m => {
         const done = !!takenToday[m.id];
-        return `<div class="card">
+        const overdue = !done && isOverdue(m);
+        return `<div class="card ${overdue ? 'overdue' : ''}">
           <div class="med-row">
             <div class="med-checkbox ${done ? 'done' : ''}" onclick="toggleMed('${m.id}')" title="${done ? 'Mark as not taken' : 'Mark as taken'}"></div>
             <div class="med-info">
               <div class="med-name ${done ? 'done' : ''}">${escHtml(m.name)}</div>
-              <div class="med-sub ${done ? 'done' : ''}">${escHtml(m.dose || 'No dosage specified')}</div>
+              <div class="med-sub ${done ? 'done' : ''}">${escHtml(m.dose || 'No dosage')}</div>
             </div>
-            <div class="med-time-badge ${done ? 'done' : ''}">${fmt12(m.time) || 'No time'}</div>
-            <button class="med-delete" onclick="deleteMed('${m.id}')" title="Remove medicine">&#10005;</button>
+            <div class="med-time-badge ${done ? 'done' : (overdue ? 'overdue' : '')}">
+              ${fmt12(m.time) || 'No time'}
+              ${overdue ? ' (overdue)' : ''}
+            </div>
+            <div class="med-actions">
+              ${!done ? `<button class="med-whatsapp" onclick="sendWhatsAppReminder(${JSON.stringify(m).replace(/"/g, '&quot;')})" title="Send WhatsApp reminder">💬</button>` : ''}
+              <button class="med-delete" onclick="deleteMed('${m.id}')" title="Remove medicine">&#10005;</button>
+            </div>
           </div>
         </div>`;
       }).join('');
@@ -429,6 +584,7 @@
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // Make functions global for onclick handlers
   window.toggleMed = function (id) {
     if (takenToday[id]) {
       delete takenToday[id];
@@ -438,13 +594,10 @@
       const m = medicines.find(x => x.id === id);
       if (m) {
         playBeep();
-        showToast('Marked ' + m.name + ' as taken \u2713');
+        showToast('✓ ' + m.name + ' marked as taken');
         
-        // Clear any snooze for this medicine
-        if (snoozedMeds[id]) {
-          delete snoozedMeds[id];
-          localStorage.setItem(STORAGE_KEY_SNOOZED, JSON.stringify(snoozedMeds));
-        }
+        // Send confirmation WhatsApp
+        sendWhatsAppReminder(m, `✅ *Medicine Taken*%0A%0AYou've marked ${m.name} as taken at ${new Date().toLocaleTimeString()}.%0A%0AGreat job! 💪`);
       }
     }
     saveTaken();
@@ -455,43 +608,62 @@
     const m = medicines.find(x => x.id === id);
     medicines = medicines.filter(x => x.id !== id);
     delete takenToday[id];
-    delete snoozedMeds[id];
     saveMeds();
     saveTaken();
-    localStorage.setItem(STORAGE_KEY_SNOOZED, JSON.stringify(snoozedMeds));
     if (m) showToast(m.name + ' removed');
     render();
   };
 
+  window.sendWhatsAppReminder = function(medicine) {
+    if (!whatsappNumber) {
+      const number = prompt('📱 Enter your WhatsApp number (with country code, e.g., 919876543210):', whatsappNumber);
+      if (number) {
+        whatsappNumber = number.replace(/\D/g, '');
+        localStorage.setItem(STORAGE_KEY_WA_NUMBER, whatsappNumber);
+      } else {
+        showToast('Please add your WhatsApp number');
+        return;
+      }
+    }
+
+    const message = `⏰ *Medicine Reminder*%0A%0A💊 *${medicine.name}*%0A📋 Dose: ${medicine.dose || 'Take now'}%0A⏱️ Time: ${fmt12(medicine.time)}%0A%0A✓ Don't forget to take your medicine!`;
+    
+    const waLink = `https://wa.me/${whatsappNumber}?text=${message}`;
+    window.open(waLink, '_blank');
+    
+    showToast(`WhatsApp reminder sent`);
+  };
+
   function setupNotifBanner() {
     const el = document.getElementById('notif-banner');
-    if (!('Notification' in window)) {
-      el.innerHTML = '';
-      return;
-    }
     
-    if (Notification.permission === 'granted') {
-      if (swRegistration) {
-        el.innerHTML = '<div class="notif-banner ok">✓ Background notifications active. Install app for best experience!</div>';
-      } else {
-        el.innerHTML = '<div class="notif-banner ok">Notifications are enabled. Install app for background alerts!</div>';
-      }
-    } else if (Notification.permission === 'denied') {
-      el.innerHTML = '<div class="notif-banner warn">Notifications are blocked. Enable them in your browser settings to receive alerts.</div>';
+    if (whatsappNumber) {
+      el.innerHTML = `<div class="notif-banner whatsapp">
+        <span>💬 WhatsApp reminders active (${whatsappNumber})</span>
+        <button class="notif-btn" onclick="changeWhatsAppNumber()">Change</button>
+      </div>`;
     } else {
-      el.innerHTML = '<div class="notif-banner warn">Enable notifications to get medicine reminders<button class="notif-btn" onclick="askNotif()">Enable</button></div>';
+      el.innerHTML = `<div class="notif-banner warn">
+        <span>Set up WhatsApp for reliable reminders</span>
+        <button class="notif-btn" onclick="setupWhatsApp()">Set up</button>
+      </div>`;
     }
   }
 
-  window.askNotif = async function () {
-    const perm = await Notification.requestPermission();
-    if (perm === 'granted') {
-      if (swRegistration) {
-        await subscribeToPush();
-      }
-      showToast('Notifications enabled! You can now install the app for background alerts.');
+  window.setupWhatsApp = function() {
+    const number = prompt('📱 Enter your WhatsApp number (with country code, e.g., 919876543210):', '');
+    if (number) {
+      whatsappNumber = number.replace(/\D/g, '');
+      localStorage.setItem(STORAGE_KEY_WA_NUMBER, whatsappNumber);
+      showToast('WhatsApp number saved!');
+      setupNotifBanner();
     }
-    setupNotifBanner();
+  };
+
+  window.changeWhatsAppNumber = function() {
+    localStorage.removeItem(STORAGE_KEY_WA_NUMBER);
+    whatsappNumber = '';
+    setupWhatsApp();
   };
 
   function startChecker() {
@@ -517,50 +689,76 @@
     medicines.forEach(m => {
       if (!m.time || takenToday[m.id]) return;
       
-      // Check if medicine is snoozed
-      if (snoozedMeds[m.id] && snoozedMeds[m.id] > Date.now()) return;
-      
-      const notifKey = m.id + '_' + todayKey + '_' + m.time;
-      if (alreadyNotified.has(notifKey)) return;
-      
       const [mh, mmin] = m.time.split(':').map(Number);
       const medicineTime = mh * 60 + mmin;
       const diff = currentTime - medicineTime;
       
+      // Time to take (within 2 minutes)
       if (diff >= 0 && diff < 2) {
-        alreadyNotified.add(notifKey);
-        playBeep();
-        sendBrowserNotif(m.name, m.dose, m.time, m.id);
-        showToast('Time to take ' + m.name + '!');
+        const notifKey = m.id + '_' + todayKey + '_' + m.time;
+        if (!alreadyNotified.has(notifKey)) {
+          alreadyNotified.add(notifKey);
+          playBeep();
+          
+          // Show popup reminder
+          showReminderPopup(m);
+          
+          // Try browser notification (if app is open)
+          if (Notification.permission === 'granted') {
+            new Notification('⏰ Time for medicine!', {
+              body: `${m.name} - ${m.dose || 'Take now'}`,
+              requireInteraction: true
+            });
+          }
+          
+          showToast(`Time to take ${m.name}!`);
+        }
+      }
+      
+      // Overdue reminder (30+ minutes)
+      if (diff > 30 && diff < 31 && !alreadyNotified.has(m.id + '_overdue')) {
+        alreadyNotified.add(m.id + '_overdue');
+        
+        // Ask if they want WhatsApp reminder
+        if (confirm(`⏰ ${m.name} is overdue! Send WhatsApp reminder?`)) {
+          sendWhatsAppReminder(m);
+        }
+        
+        render(); // Re-render to show overdue style
       }
     });
   }
 
-  // Install prompt handler
+  // Install prompt
   let deferredPrompt;
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     
-    // Show install button
-    const installBtn = document.createElement('button');
-    installBtn.id = 'install-btn';
-    installBtn.textContent = '📱 Install App';
-    installBtn.className = 'notif-btn';
-    installBtn.style.marginTop = '10px';
+    const installBanner = document.createElement('div');
+    installBanner.className = 'install-banner';
+    installBanner.innerHTML = `
+      <div class="install-content">
+        <span>📱 Install app for better reminders</span>
+        <button class="install-btn">Install</button>
+        <button class="close-btn">✕</button>
+      </div>
+    `;
     
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
+    installBanner.querySelector('.install-btn').addEventListener('click', async () => {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
-        showToast('Thank you for installing!');
+        showToast('App installed!');
       }
-      deferredPrompt = null;
-      installBtn.remove();
+      installBanner.remove();
     });
     
-    document.querySelector('.header').appendChild(installBtn);
+    installBanner.querySelector('.close-btn').addEventListener('click', () => {
+      installBanner.remove();
+    });
+    
+    document.body.appendChild(installBanner);
   });
 
   document.getElementById('toggle-form').addEventListener('click', function () {
@@ -576,27 +774,40 @@
     const time = document.getElementById('inp-time').value;
     if (!name) { showToast('Please enter a medicine name'); return; }
     if (!time) { showToast('Please set a reminder time'); return; }
+    
     const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     medicines.push({ id, name, dose, time });
     saveMeds();
+    
+    // Clear form
     document.getElementById('inp-name').value = '';
     document.getElementById('inp-dose').value = '';
     document.getElementById('inp-time').value = '';
     document.getElementById('add-form-container').style.display = 'none';
     document.getElementById('toggle-form').textContent = '+ Add new medicine';
+    
     showToast(name + ' added!');
+    
+    // Ask to set up WhatsApp if not already
+    if (!whatsappNumber) {
+      setTimeout(() => {
+        if (confirm('📱 Set up WhatsApp reminders to never miss a dose?')) {
+          setupWhatsApp();
+        }
+      }, 1000);
+    }
+    
     render();
   });
 
+  // Request notification permission on load
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+
   // Initialize
-  (async function init() {
-    const hasSW = await registerServiceWorker();
-    if (hasSW && Notification.permission === 'granted') {
-      await subscribeToPush();
-    }
-    setupNotifBanner();
-    loadData();
-  })();
+  setupNotifBanner();
+  loadData();
 })();
 </script>
 </body>

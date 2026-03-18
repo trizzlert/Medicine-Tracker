@@ -382,8 +382,6 @@
       .form-row input, .form-row select { min-width: 100%; }
     }
   </style>
-  <!-- EmailJS Library for automated emails -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -405,20 +403,20 @@
       <div class="setting-content">
         <div class="setting-label">WhatsApp</div>
         <div class="setting-status" id="whatsapp-status">Not configured</div>
-        <input type="text" id="whatsapp-number" class="setting-input" placeholder="+919876543210" style="display:none;">
+        <input type="text" id="whatsapp-number" class="setting-input" placeholder="Enter WhatsApp number (e.g., 919876543210)" style="display:none;">
       </div>
-      <button class="setting-btn whatsapp" onclick="configureWhatsApp()" id="whatsapp-btn">Configure</button>
+      <button class="setting-btn whatsapp" onclick="window.app.configureWhatsApp()" id="whatsapp-btn">Configure</button>
     </div>
 
-    <!-- Email Setting (Automated) -->
+    <!-- Email Setting (Manual for now) -->
     <div class="setting-item">
       <div class="setting-icon email">📧</div>
       <div class="setting-content">
-        <div class="setting-label">Email (Automated)</div>
+        <div class="setting-label">Email</div>
         <div class="setting-status" id="email-status">Not configured</div>
         <input type="email" id="email-address" class="setting-input" placeholder="your@email.com" style="display:none;">
       </div>
-      <button class="setting-btn email" onclick="configureEmail()" id="email-btn">Configure</button>
+      <button class="setting-btn email" onclick="window.app.configureEmail()" id="email-btn">Configure</button>
     </div>
 
     <!-- Android Alarm Setting -->
@@ -428,13 +426,12 @@
         <div class="setting-label">Android Alarm</div>
         <div class="setting-status" id="alarm-status">Available on Android</div>
       </div>
-      <button class="setting-btn alarm" onclick="testAndroidAlarm()">Test Alarm</button>
+      <button class="setting-btn alarm" onclick="window.app.testAndroidAlarm()">Test Alarm</button>
     </div>
 
     <!-- Android Note -->
     <div class="android-note">
-      <strong>📱 Android Users:</strong> For reliable alarms, install this app and enable notifications. 
-      The alarm will ring even when your phone is locked!
+      <strong>📱 Android Users:</strong> For reliable alarms, install this app and enable notifications.
     </div>
   </div>
 
@@ -469,17 +466,16 @@
 <div class="toast" id="toast"></div>
 
 <script>
-(function () {
-  // Initialize EmailJS
-  emailjs.init('YOUR_USER_ID'); // Get this from EmailJS.com (free)
-
+(function() {
+  // App namespace
+  window.app = {};
+  
   const STORAGE_KEY_MEDS = 'medtracker_medicines';
   const STORAGE_KEY_TAKEN_PREFIX = 'medtracker_taken_';
   
   // Settings keys
   const STORAGE_KEY_WHATSAPP = 'medtracker_whatsapp';
   const STORAGE_KEY_EMAIL = 'medtracker_email';
-  const STORAGE_KEY_EMAIL_CONFIGURED = 'medtracker_email_configured';
 
   let medicines = [];
   let takenToday = {};
@@ -490,13 +486,11 @@
   // Settings
   let whatsappNumber = '';
   let emailAddress = '';
-  let emailConfigured = false;
 
   // Load settings
   try {
     whatsappNumber = localStorage.getItem(STORAGE_KEY_WHATSAPP) || '';
     emailAddress = localStorage.getItem(STORAGE_KEY_EMAIL) || '';
-    emailConfigured = localStorage.getItem(STORAGE_KEY_EMAIL_CONFIGURED) === 'true';
   } catch (e) {}
 
   function getTodayKey() {
@@ -521,6 +515,9 @@
   function playBeep() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
       [0, 0.22, 0.44].forEach((delay, i) => {
         const o = ctx.createOscillator();
         const g = ctx.createGain();
@@ -536,11 +533,10 @@
     } catch (e) {}
   }
 
-  // ============ WHATSAPP (Semi-automated) ============
+  // ============ WHATSAPP ============
   function sendWhatsAppReminder(medicine, type = 'reminder') {
     if (!whatsappNumber) {
       showToast('Please configure WhatsApp first');
-      configureWhatsApp();
       return false;
     }
 
@@ -570,11 +566,10 @@
     return true;
   }
 
-  // ============ EMAIL (Fully Automated) ============
-  async function sendEmailReminder(medicine, type = 'reminder') {
-    if (!emailConfigured || !emailAddress) {
+  // ============ EMAIL (via mailto) ============
+  function sendEmailReminder(medicine, type = 'reminder') {
+    if (!emailAddress) {
       showToast('Please configure email first');
-      configureEmail();
       return false;
     }
 
@@ -598,25 +593,11 @@
     };
 
     const template = templates[type] || templates.reminder;
-
-    try {
-      // Using EmailJS (free tier: 200 emails/month)
-      await emailjs.send('service_id', 'template_id', {
-        to_email: emailAddress,
-        subject: template.subject,
-        message: template.body,
-        medicine_name: medicine.name,
-        medicine_dose: medicine.dose,
-        medicine_time: fmt12(medicine.time)
-      });
-      
-      showToast(`✅ Email reminder sent to ${emailAddress}`);
-      return true;
-    } catch (error) {
-      console.error('Email error:', error);
-      showToast('❌ Failed to send email. Check EmailJS config.');
-      return false;
-    }
+    const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(template.subject)}&body=${encodeURIComponent(template.body)}`;
+    
+    window.open(mailtoLink, '_blank');
+    showToast('📧 Email client opened - just tap Send!');
+    return true;
   }
 
   // ============ ANDROID ALARM ============
@@ -629,41 +610,7 @@
       return false;
     }
 
-    // Method 1: Web Alarm API (limited support)
-    if ('alarms' in navigator) {
-      try {
-        const [hours, minutes] = medicine.time.split(':').map(Number);
-        const alarmTime = new Date();
-        alarmTime.setHours(hours, minutes, 0, 0);
-        
-        // If time already passed today, set for tomorrow
-        if (alarmTime < new Date()) {
-          alarmTime.setDate(alarmTime.getDate() + 1);
-        }
-
-        navigator.alarms.set(`${medicine.id}_${Date.now()}`, {
-          when: alarmTime.getTime(),
-          title: `💊 ${medicine.name}`,
-          message: `${medicine.dose || 'Time to take medicine'}`,
-          vibrate: true
-        });
-        
-        showToast('⏰ Android alarm set successfully!');
-        return true;
-      } catch (e) {
-        console.log('Alarm API error:', e);
-      }
-    }
-
-    // Method 2: Create .ics file for Google Calendar
-    createICSFile(medicine);
-    
-    // Method 3: Show instructions
-    showToast('📱 Tap "Add to Calendar" to set alarm');
-    return false;
-  }
-
-  function createICSFile(medicine) {
+    // Create calendar event with alarm
     const [hours, minutes] = medicine.time.split(':').map(Number);
     const alarmTime = new Date();
     alarmTime.setHours(hours, minutes, 0, 0);
@@ -677,15 +624,18 @@
     const day = String(alarmTime.getDate()).padStart(2, '0');
     const hour = String(alarmTime.getHours()).padStart(2, '0');
     const minute = String(alarmTime.getMinutes()).padStart(2, '0');
-    const second = String(alarmTime.getSeconds()).padStart(2, '0');
+    const second = '00';
     
+    // Create .ics file with alarm
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
+PRODID:-//Medicine Tracker//EN
 BEGIN:VEVENT
+UID:${Date.now()}@medtracker
+DTSTAMP:${year}${month}${day}T${hour}${minute}${second}
+DTSTART:${year}${month}${day}T${hour}${minute}${second}
 SUMMARY:💊 ${medicine.name}
 DESCRIPTION:${medicine.dose || 'Medicine reminder'}
-DTSTART:${year}${month}${day}T${hour}${minute}${second}
-DURATION:PT5M
 BEGIN:VALARM
 TRIGGER:-PT0M
 ACTION:DISPLAY
@@ -698,14 +648,18 @@ END:VCALENDAR`;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `medicine_${medicine.name}.ics`;
+    a.download = `medicine_${medicine.name.replace(/\s+/g, '_')}.ics`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
     
-    showToast('📅 Calendar file downloaded - import for alarm!');
+    showToast('📅 Calendar file downloaded - open to set alarm!');
+    return true;
   }
 
   // ============ CONFIGURATION FUNCTIONS ============
-  window.configureWhatsApp = function() {
+  window.app.configureWhatsApp = function() {
     const input = document.getElementById('whatsapp-number');
     const btn = document.getElementById('whatsapp-btn');
     const status = document.getElementById('whatsapp-status');
@@ -724,10 +678,11 @@ END:VCALENDAR`;
       }
       input.style.display = 'none';
       btn.textContent = 'Configure';
+      updateBanner();
     }
   };
 
-  window.configureEmail = function() {
+  window.app.configureEmail = function() {
     const input = document.getElementById('email-address');
     const btn = document.getElementById('email-btn');
     const status = document.getElementById('email-status');
@@ -735,38 +690,22 @@ END:VCALENDAR`;
     if (input.style.display === 'none') {
       input.style.display = 'block';
       input.value = emailAddress;
-      btn.textContent = 'Save & Test';
+      btn.textContent = 'Save';
     } else {
       const email = input.value.trim();
       if (email && email.includes('@')) {
         emailAddress = email;
-        emailConfigured = true;
         localStorage.setItem(STORAGE_KEY_EMAIL, email);
-        localStorage.setItem(STORAGE_KEY_EMAIL_CONFIGURED, 'true');
         status.textContent = `Configured: ${email}`;
-        
-        // Test email
-        sendTestEmail();
+        showToast('Email saved!');
       }
       input.style.display = 'none';
       btn.textContent = 'Configure';
+      updateBanner();
     }
   };
 
-  async function sendTestEmail() {
-    try {
-      await emailjs.send('service_id', 'template_id', {
-        to_email: emailAddress,
-        subject: '✅ Medicine Tracker Test',
-        message: 'Your email reminders are working! You will receive automated reminders for your medicines.'
-      });
-      showToast('✅ Test email sent! Check your inbox.');
-    } catch (error) {
-      showToast('❌ Email test failed. Check EmailJS config.');
-    }
-  }
-
-  window.testAndroidAlarm = function() {
+  window.app.testAndroidAlarm = function() {
     const testMed = {
       name: 'Test Medicine',
       dose: 'Test Dose',
@@ -775,32 +714,38 @@ END:VCALENDAR`;
     setAndroidAlarm(testMed);
   };
 
-  // ============ REMINDER POPUP ============
+  // ============ REMINDER FUNCTIONS ============
   function showReminderPopup(medicine) {
+    // Remove any existing popup
+    const existingPopup = document.querySelector('.reminder-popup');
+    if (existingPopup) {
+      existingPopup.remove();
+    }
+
     const popup = document.createElement('div');
     popup.className = 'reminder-popup';
     popup.innerHTML = `
       <button class="reminder-close" onclick="this.closest('.reminder-popup').remove()">✕</button>
       <div class="reminder-title">⏰ Medicine Time!</div>
       <div class="reminder-med-info">
-        <div class="reminder-med-name">${medicine.name}</div>
-        <div class="reminder-med-dose">${medicine.dose || 'No dosage specified'}</div>
+        <div class="reminder-med-name">${escapeHtml(medicine.name)}</div>
+        <div class="reminder-med-dose">${escapeHtml(medicine.dose || 'No dosage specified')}</div>
         <div class="reminder-med-time">Scheduled at ${fmt12(medicine.time)}</div>
       </div>
       <div class="reminder-methods">
-        <button class="reminder-method-btn whatsapp" onclick="sendReminder('whatsapp', '${medicine.id}'); this.closest('.reminder-popup').remove()">
+        <button class="reminder-method-btn whatsapp" onclick="window.app.sendReminder('whatsapp', '${medicine.id}')">
           <span class="reminder-method-icon">💬</span>
-          <span>WhatsApp Reminder (Tap to send)</span>
+          <span>WhatsApp Reminder</span>
         </button>
-        <button class="reminder-method-btn email" onclick="sendReminder('email', '${medicine.id}'); this.closest('.reminder-popup').remove()">
+        <button class="reminder-method-btn email" onclick="window.app.sendReminder('email', '${medicine.id}')">
           <span class="reminder-method-icon">📧</span>
-          <span>Email Reminder (Automated)</span>
+          <span>Email Reminder</span>
         </button>
-        <button class="reminder-method-btn alarm" onclick="sendReminder('alarm', '${medicine.id}'); this.closest('.reminder-popup').remove()">
+        <button class="reminder-method-btn alarm" onclick="window.app.sendReminder('alarm', '${medicine.id}')">
           <span class="reminder-method-icon">⏰</span>
           <span>Set Android Alarm</span>
         </button>
-        <button class="reminder-method-btn taken" onclick="toggleMed('${medicine.id}'); this.closest('.reminder-popup').remove()">
+        <button class="reminder-method-btn taken" onclick="window.app.toggleMed('${medicine.id}')">
           <span class="reminder-method-icon">✓</span>
           <span>I already took it</span>
         </button>
@@ -809,9 +754,81 @@ END:VCALENDAR`;
     document.body.appendChild(popup);
   }
 
-  window.sendReminder = function(method, medicineId) {
+  window.app.sendReminder = function(method, medicineId) {
     const medicine = medicines.find(m => m.id === medicineId);
     if (!medicine) return;
 
+    // Close popup
+    const popup = document.querySelector('.reminder-popup');
+    if (popup) popup.remove();
+
     switch(method) {
-      case 'what
+      case 'whatsapp':
+        sendWhatsAppReminder(medicine);
+        break;
+      case 'email':
+        sendEmailReminder(medicine);
+        break;
+      case 'alarm':
+        setAndroidAlarm(medicine);
+        break;
+    }
+  };
+
+  window.app.toggleMed = function(id) {
+    const medicine = medicines.find(m => m.id === id);
+    if (!medicine) return;
+
+    if (takenToday[id]) {
+      delete takenToday[id];
+      showToast('Marked as not taken');
+    } else {
+      takenToday[id] = Date.now();
+      playBeep();
+      showToast('✓ ' + medicine.name + ' marked as taken');
+      
+      // Send confirmation via WhatsApp if configured
+      if (whatsappNumber) {
+        setTimeout(() => {
+          if (confirm('Send confirmation via WhatsApp?')) {
+            sendWhatsAppReminder(medicine, 'taken');
+          }
+        }, 1000);
+      }
+    }
+    
+    // Close any open popup
+    const popup = document.querySelector('.reminder-popup');
+    if (popup) popup.remove();
+    
+    saveTaken();
+    render();
+  };
+
+  window.app.deleteMed = function(id) {
+    if (!confirm('Remove this medicine?')) return;
+    
+    const medicine = medicines.find(m => m.id === id);
+    medicines = medicines.filter(x => x.id !== id);
+    delete takenToday[id];
+    saveMeds();
+    saveTaken();
+    if (medicine) showToast(medicine.name + ' removed');
+    render();
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // ============ DATA MANAGEMENT ============
+  function loadData() {
+    todayKey = getTodayKey();
+    try {
+      const raw = localStorage.getItem(

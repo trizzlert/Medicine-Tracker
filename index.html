@@ -1,834 +1,937 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Medicine Tracker - A smart remainder app by Trijal.</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>MedTrack · Smart Medicine Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #ffffff;
-      --bg2: #f5f5f3;
-      --bg3: #eeede9;
-      --text: #1a1a18;
-      --text2: #6b6b67;
-      --text3: #9e9d99;
-      --border: rgba(0,0,0,0.12);
-      --border2: rgba(0,0,0,0.22);
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --green: #1D9E75;
-      --green-dark: #0F6E56;
-      --green-light: #E1F5EE;
-      --green-text: #085041;
-      --whatsapp: #25D366;
-      --whatsapp-dark: #128C7E;
-      --email: #4285F4;
-      --email-dark: #3367D6;
-      --alarm: #FF6B6B;
-      --alarm-dark: #FF5252;
+      --bg0:       #0a1412;
+      --bg1:       #0f1f1c;
+      --bg2:       #162b27;
+      --bg3:       #1d3630;
+      --bg4:       #24413a;
+      --green:     #00d97e;
+      --green2:    #00b568;
+      --green-glow:rgba(0,217,126,0.18);
+      --amber:     #ffb347;
+      --red:       #ff6b6b;
+      --blue:      #4da3ff;
+      --wa:        #25d366;
+      --text:      #e8f5f0;
+      --text2:     #8ab0a4;
+      --text3:     #4d7066;
+      --border:    rgba(0,217,126,0.12);
+      --border2:   rgba(0,217,126,0.22);
+      --radius:    14px;
+      --radius-sm: 8px;
+      --shadow:    0 4px 24px rgba(0,0,0,0.4);
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1e1e1c;
-        --bg2: #282826;
-        --bg3: #323230;
-        --text: #f0efeb;
-        --text2: #a0a09c;
-        --text3: #686864;
-        --border: rgba(255,255,255,0.1);
-        --border2: rgba(255,255,255,0.2);
-        --green-light: #04342C;
-        --green-text: #9FE1CB;
-      }
-    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg3);
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg0);
       color: var(--text);
       min-height: 100vh;
-    }
-    .app {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 2rem 1rem 5rem;
-    }
-    .header { margin-bottom: 1.5rem; }
-    .header h1 { font-size: 26px; font-weight: 600; color: var(--text); }
-    .header p { font-size: 14px; color: var(--text2); margin-top: 4px; }
-    .date-bar { font-size: 11px; color: var(--text3); margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
-
-    /* Settings Section */
-    .settings-section {
-      background: var(--bg);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .settings-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text2);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .setting-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      padding: 8px;
-      background: var(--bg2);
-      border-radius: var(--radius-md);
-    }
-    .setting-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-    .setting-icon.whatsapp { background: var(--whatsapp); color: white; }
-    .setting-icon.email { background: var(--email); color: white; }
-    .setting-icon.alarm { background: var(--alarm); color: white; }
-    .setting-content {
-      flex: 1;
-    }
-    .setting-label {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .setting-status {
-      font-size: 12px;
-      color: var(--text2);
-    }
-    .setting-input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius-md);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 13px;
-      margin-top: 4px;
-    }
-    .setting-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      background: var(--bg3);
-      color: var(--text);
-    }
-    .setting-btn.primary {
-      background: var(--green);
-      color: white;
-    }
-    .setting-btn.whatsapp { background: var(--whatsapp); color: white; }
-    .setting-btn.email { background: var(--email); color: white; }
-    .setting-btn.alarm { background: var(--alarm); color: white; }
-
-    .notif-banner {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-radius: var(--radius-md); margin-bottom: 1rem;
-      font-size: 13px;
-    }
-    .notif-banner.warn { background: #FAEEDA; color: #633806; border: 0.5px solid #FAC775; }
-    .notif-banner.ok { background: var(--green-light); color: var(--green-text); border: 0.5px solid #9FE1CB; }
-    .notif-banner.whatsapp { background: #DCF8C6; color: #075E54; border: 0.5px solid #25D366; }
-    .notif-banner.email { background: #E8F0FE; color: #174EA6; border: 0.5px solid #4285F4; }
-    .notif-banner.alarm { background: #FFE9E9; color: #B3261E; border: 0.5px solid #FF6B6B; }
-    
-    .notif-btn {
-      font-size: 12px; font-weight: 500; border: 1.5px solid currentColor;
-      border-radius: 20px; padding: 3px 12px; background: transparent;
-      cursor: pointer; color: inherit; margin-left: auto; flex-shrink: 0;
+      background-image:
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(0,217,126,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 10% 80%, rgba(0,181,104,0.04) 0%, transparent 70%);
     }
 
-    .stats { display: flex; gap: 10px; margin-bottom: 0.5rem; }
-    .stat { flex: 1; background: var(--bg2); border-radius: var(--radius-md); padding: 0.7rem 1rem; }
-    .stat-num { font-size: 24px; font-weight: 600; color: var(--text); }
-    .stat-lbl { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg1); }
+    ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
 
-    .progress-bar { height: 5px; border-radius: 3px; background: var(--bg3); margin: 0.4rem 0 0; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 3px; background: var(--green); transition: width 0.4s ease; }
+    .app { max-width: 540px; margin: 0 auto; padding: 1.5rem 1rem 6rem; }
 
+    /* HEADER */
+    .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+    .header-left h1 {
+      font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #00d97e 0%, #00ffaa 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .header-left p { font-size: 13px; color: var(--text2); margin-top: 3px; }
+    .date-pill {
+      font-size: 11px; font-weight: 600; color: var(--text3);
+      background: var(--bg3); border: 0.5px solid var(--border);
+      padding: 4px 10px; border-radius: 20px; margin-top: 6px; display: inline-block;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .settings-trigger {
+      width: 42px; height: 42px; border: 0.5px solid var(--border2);
+      background: var(--bg2); border-radius: 50%; cursor: pointer;
+      color: var(--text2); font-size: 18px; display: flex;
+      align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
+    }
+    .settings-trigger:hover { background: var(--bg3); color: var(--green); }
+
+    /* STATUS BAR */
+    .status-bar {
+      background: var(--bg2); border: 0.5px solid var(--border);
+      border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px; font-size: 13px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status-dot.amber { background: var(--amber); }
+    .status-bar-text { flex: 1; color: var(--text2); }
+    .status-bar-text strong { color: var(--text); }
+
+    /* STATS */
+    .stats { display: flex; gap: 10px; margin-bottom: 12px; }
+    .stat {
+      flex: 1; background: var(--bg2); border: 0.5px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px; position: relative; overflow: hidden;
+    }
+    .stat::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,217,126,0.04) 0%, transparent 60%);
+    }
+    .stat-num { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; color: var(--green); line-height: 1; }
+    .stat-num.amber { color: var(--amber); }
+    .stat-num.normal { color: var(--text); }
+    .stat-lbl { font-size: 11px; color: var(--text2); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .progress-track { height: 4px; background: var(--bg3); border-radius: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+    .progress-fill {
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--green2), var(--green));
+      transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    /* SECTION TITLE */
     .section-title {
-      font-size: 11px; font-weight: 600; color: var(--text2);
-      letter-spacing: 0.07em; text-transform: uppercase;
-      margin: 1.5rem 0 0.6rem;
+      font-size: 11px; font-weight: 700; color: var(--text3);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin: 1.5rem 0 0.75rem; display: flex; align-items: center; gap: 8px;
     }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-    .card {
-      background: var(--bg); border: 0.5px solid var(--border);
-      border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.5rem;
-      transition: all 0.2s ease;
+    /* MED CARD */
+    .med-card {
+      background: var(--bg2); border: 0.5px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px;
+      transition: all 0.2s; position: relative; overflow: hidden;
     }
-    .card.overdue {
-      border-left: 4px solid var(--alarm);
+    .med-card.overdue {
+      border-color: rgba(255,107,107,0.4);
+      background: linear-gradient(135deg, var(--bg2) 0%, rgba(255,107,107,0.06) 100%);
     }
+    .med-card.overdue::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--red); }
+    .med-card.taken { opacity: 0.55; }
+    .med-card.taken::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--green); }
+
     .med-row { display: flex; align-items: center; gap: 12px; }
-    .med-checkbox {
-      width: 24px; height: 24px; border: 1.5px solid var(--border2);
-      border-radius: 50%; cursor: pointer; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s; background: transparent;
+
+    .check-ring {
+      width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border2);
+      flex-shrink: 0; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: all 0.2s; background: transparent;
     }
-    .med-checkbox.done { background: var(--green); border-color: var(--green); }
-    .med-checkbox.done::after {
-      content: ''; width: 6px; height: 11px;
-      border: 2px solid #fff; border-top: none; border-left: none;
+    .check-ring:hover { border-color: var(--green); background: var(--green-glow); }
+    .check-ring.done { background: var(--green); border-color: var(--green); }
+    .check-ring.done::after {
+      content: ''; width: 7px; height: 12px;
+      border: 2.5px solid #fff; border-top: none; border-left: none;
       transform: rotate(45deg) translateY(-1px); display: block;
     }
+
     .med-info { flex: 1; min-width: 0; }
-    .med-name { font-size: 15px; font-weight: 500; color: var(--text); }
+    .med-name { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .med-name.done { color: var(--text3); text-decoration: line-through; }
-    .med-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+    .med-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
     .med-sub.done { color: var(--text3); }
-    .med-time-badge {
-      font-size: 12px; padding: 3px 10px; border-radius: 20px;
-      background: var(--green-light); color: var(--green-text);
-      font-weight: 500; flex-shrink: 0; white-space: nowrap;
-    }
-    .med-time-badge.done { background: var(--bg2); color: var(--text3); }
-    .med-time-badge.overdue { background: var(--alarm); color: white; }
-    
-    .med-actions {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-    .action-btn {
-      width: 32px; height: 32px; border: none; border-radius: 50%;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: 14px; transition: all 0.2s; background: var(--bg2);
-      color: var(--text2);
-    }
-    .action-btn.whatsapp { background: var(--whatsapp); color: white; }
-    .action-btn.email { background: var(--email); color: white; }
-    .action-btn.alarm { background: var(--alarm); color: white; }
-    .action-btn.delete { color: var(--text3); }
-    .action-btn:hover { transform: scale(1.1); }
-    .action-btn.whatsapp:hover { background: var(--whatsapp-dark); }
-    .action-btn.email:hover { background: var(--email-dark); }
-    .action-btn.alarm:hover { background: var(--alarm-dark); }
-    .action-btn.delete:hover { background: var(--bg3); color: #e24b4a; }
 
-    .empty-state {
-      text-align: center; padding: 2.5rem 1rem; color: var(--text2); font-size: 14px;
-      border: 0.5px dashed var(--border2); border-radius: var(--radius-lg);
+    .time-badge {
+      font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; flex-shrink: 0;
+      background: rgba(0,217,126,0.12); color: var(--green); border: 0.5px solid rgba(0,217,126,0.25);
     }
-    .empty-state span { display: block; font-size: 32px; margin-bottom: 8px; }
+    .time-badge.done { background: var(--bg3); color: var(--text3); border-color: var(--border); }
+    .time-badge.overdue { background: rgba(255,107,107,0.15); color: var(--red); border-color: rgba(255,107,107,0.3); }
 
-    #toggle-form {
-      width: 100%; height: 40px; border: 0.5px solid var(--border2);
-      background: transparent; color: var(--text); font-size: 14px;
-      border-radius: var(--radius-md); cursor: pointer; transition: background 0.1s;
+    .med-actions { display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+    .act-btn {
+      flex: 1; height: 32px; border: none; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 12px; font-weight: 700; display: flex;
+      align-items: center; justify-content: center; gap: 5px; transition: all 0.2s;
     }
-    #toggle-form:hover { background: var(--bg2); }
+    .act-btn.wa   { background: rgba(37,211,102,0.15); color: var(--wa); }
+    .act-btn.wa:hover   { background: var(--wa); color: white; }
+    .act-btn.mail { background: rgba(77,163,255,0.12); color: var(--blue); }
+    .act-btn.mail:hover { background: var(--blue); color: white; }
+    .act-btn.alrm { background: rgba(255,179,71,0.12); color: var(--amber); }
+    .act-btn.alrm:hover { background: var(--amber); color: #1a1a18; }
+    .act-btn.del  { background: rgba(255,107,107,0.10); color: var(--red); flex: 0; padding: 0 12px; }
+    .act-btn.del:hover  { background: var(--red); color: white; }
 
-    .add-form {
-      border: 0.5px solid var(--border); border-radius: var(--radius-lg);
-      padding: 1rem 1.25rem; background: var(--bg2); margin-top: 8px;
+    /* EMPTY */
+    .empty {
+      text-align: center; padding: 3rem 1rem;
+      border: 1px dashed var(--border2); border-radius: var(--radius); color: var(--text2);
     }
+    .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* ADD FORM */
+    .add-toggle {
+      width: 100%; height: 44px; border: 0.5px solid var(--border2);
+      background: transparent; color: var(--text2); font-size: 14px; font-weight: 600;
+      border-radius: var(--radius); cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .add-toggle:hover { background: var(--bg2); color: var(--green); }
+    .add-form { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 8px; }
     .form-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-    .form-row input, .form-row select {
-      flex: 1; min-width: 130px; font-size: 14px; padding: 0 10px; height: 38px;
-      border: 0.5px solid var(--border2); border-radius: var(--radius-md);
-      background: var(--bg); color: var(--text); outline: none;
+    .form-row input {
+      flex: 1; min-width: 120px; font-size: 14px; padding: 0 12px; height: 42px;
+      border: 0.5px solid var(--border2); border-radius: var(--radius-sm);
+      background: var(--bg1); color: var(--text); outline: none;
+      font-family: 'Nunito', sans-serif; transition: border-color 0.2s;
     }
-    .form-row input:focus, .form-row select:focus { border-color: var(--green); }
+    .form-row input:focus { border-color: var(--green); }
+    .form-row input::placeholder { color: var(--text3); }
     .btn-add {
-      width: 100%; height: 40px; border: none; background: var(--green);
-      color: #fff; font-size: 14px; font-weight: 600; border-radius: var(--radius-md);
-      cursor: pointer; transition: background 0.15s;
+      width: 100%; height: 44px; border: none;
+      background: linear-gradient(135deg, var(--green2), var(--green));
+      color: var(--bg0); font-size: 15px; font-weight: 800; border-radius: var(--radius-sm);
+      cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif;
     }
-    .btn-add:hover { background: var(--green-dark); }
+    .btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,217,126,0.3); }
 
-    /* Reminder Popup */
-    .reminder-popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--bg);
-      border: 2px solid var(--green);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-      z-index: 2000;
-      max-width: 90%;
-      width: 340px;
-      animation: popIn 0.3s ease;
+    /* OVERLAY / MODAL */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
     }
-
-    @keyframes popIn {
-      from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    .overlay.show { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg1); border: 0.5px solid var(--border);
+      border-radius: 24px 24px 0 0; padding: 24px 20px 2rem; width: 100%;
+      max-width: 540px; max-height: 90vh; overflow-y: auto;
+      transform: translateY(40px); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
+    .overlay.show .modal { transform: translateY(0); }
+    .modal-drag { width: 40px; height: 4px; background: var(--bg4); border-radius: 4px; margin: 0 auto 20px; }
+    .modal-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
 
-    .reminder-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      text-align: center;
+    /* TABS */
+    .tab-bar { display: flex; gap: 4px; background: var(--bg2); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 20px; }
+    .tab {
+      flex: 1; padding: 8px 4px; border: none; background: transparent;
+      color: var(--text2); font-size: 12px; font-weight: 700; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; text-align: center;
     }
+    .tab.active { background: var(--bg4); color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-    .reminder-med-info {
-      background: var(--bg2);
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      text-align: center;
+    /* SETTING BLOCKS */
+    .setting-block {
+      background: var(--bg2); border: 0.5px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
     }
-
-    .reminder-med-name {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--green);
+    .setting-block-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .setting-block-desc { font-size: 12px; color: var(--text2); margin-bottom: 12px; line-height: 1.5; }
+    .field-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .setting-input {
+      width: 100%; height: 40px; padding: 0 12px;
+      border: 0.5px solid var(--border2); border-radius: var(--radius-sm);
+      background: var(--bg1); color: var(--text); font-size: 13px;
+      font-family: 'Nunito', sans-serif; outline: none; margin-bottom: 10px; transition: border-color 0.2s;
     }
+    .setting-input:focus { border-color: var(--green); }
+    .setting-input::placeholder { color: var(--text3); }
 
-    .reminder-med-dose {
-      font-size: 14px;
-      color: var(--text2);
-      margin-top: 4px;
+    .save-btn {
+      width: 100%; height: 40px; border: none; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif;
     }
+    .save-btn.green { background: linear-gradient(135deg, var(--green2), var(--green)); color: var(--bg0); }
+    .save-btn.green:hover { box-shadow: 0 4px 16px rgba(0,217,126,0.3); }
 
-    .reminder-med-time {
-      font-size: 13px;
-      color: var(--text3);
-      margin-top: 8px;
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
     }
+    .status-pill.ok  { background: rgba(0,217,126,0.15); color: var(--green); }
+    .status-pill.not { background: var(--bg3); color: var(--text3); }
 
-    .reminder-methods {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 16px;
+    .notif-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 0.5px solid var(--border);
     }
-
-    .reminder-method-btn {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: var(--bg2);
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 100%;
-      font-size: 14px;
+    .notif-row:last-child { border-bottom: none; }
+    .notif-row-left { flex: 1; }
+    .notif-row-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .notif-row-desc  { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .toggle-switch {
+      width: 44px; height: 24px; border-radius: 12px; background: var(--bg3);
+      border: none; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0;
     }
-
-    .reminder-method-btn:hover { transform: scale(1.02); }
-    .reminder-method-btn.whatsapp { background: #DCF8C6; color: #075E54; }
-    .reminder-method-btn.email { background: #E8F0FE; color: #174EA6; }
-    .reminder-method-btn.alarm { background: #FFE9E9; color: #B3261E; }
-    .reminder-method-btn.taken { background: var(--green-light); color: var(--green-text); }
-
-    .reminder-method-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
+    .toggle-switch::after {
+      content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+      background: white; top: 3px; left: 3px; transition: left 0.2s;
     }
+    .toggle-switch.on { background: var(--green); }
+    .toggle-switch.on::after { left: 23px; }
 
-    .reminder-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: var(--bg2);
-      border: none;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      cursor: pointer;
-      color: var(--text2);
+    .platform-note {
+      font-size: 12px; color: var(--text2); background: var(--bg3);
+      border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 10px;
+      border-left: 3px solid var(--amber); line-height: 1.5;
     }
+    .platform-note.ios  { border-left-color: var(--blue); }
+    .platform-note.info { border-left-color: var(--green); }
 
+    /* REMINDER POPUP */
+    .reminder-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .reminder-overlay.show { opacity: 1; pointer-events: all; }
+    .reminder-card {
+      background: var(--bg1); border: 1px solid var(--border2);
+      border-radius: 24px; padding: 28px 24px; width: 90%; max-width: 360px;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.5);
+      transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .reminder-overlay.show .reminder-card { transform: scale(1); }
+    .reminder-bell { font-size: 36px; text-align: center; margin-bottom: 12px; }
+    .reminder-med { text-align: center; background: var(--bg2); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .reminder-name { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .reminder-dose { font-size: 13px; color: var(--text2); }
+    .reminder-time { font-size: 12px; color: var(--text3); margin-top: 6px; }
+    .reminder-btns { display: flex; flex-direction: column; gap: 10px; }
+    .reminder-btn {
+      height: 46px; border: none; border-radius: 12px; cursor: pointer;
+      font-size: 14px; font-weight: 700; display: flex; align-items: center;
+      justify-content: center; gap: 10px; transition: all 0.2s;
+      font-family: 'Outfit', sans-serif; width: 100%;
+    }
+    .reminder-btn.wa   { background: rgba(37,211,102,0.15); color: #25d366; }
+    .reminder-btn.wa:hover   { background: var(--wa); color: white; }
+    .reminder-btn.mail { background: rgba(77,163,255,0.12); color: var(--blue); }
+    .reminder-btn.mail:hover { background: var(--blue); color: white; }
+    .reminder-btn.alrm { background: rgba(255,179,71,0.1); color: var(--amber); }
+    .reminder-btn.alrm:hover { background: var(--amber); color: #1a1a18; }
+    .reminder-btn.ok   { background: linear-gradient(135deg, var(--green2), var(--green)); color: var(--bg0); }
+    .reminder-dismiss  { text-align: center; margin-top: 12px; }
+    .reminder-dismiss button { background: none; border: none; color: var(--text3); font-size: 13px; cursor: pointer; padding: 4px 12px; }
+    .reminder-dismiss button:hover { color: var(--text2); }
+
+    /* TOAST */
     .toast {
       position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      background: #1a1a18; color: #fff; padding: 10px 22px; border-radius: 20px;
-      font-size: 14px; font-weight: 500; z-index: 9999;
-      opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+      background: var(--bg3); color: var(--text); border: 0.5px solid var(--border2);
+      padding: 10px 20px; border-radius: 24px; font-size: 13px; font-weight: 600;
+      z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+      white-space: nowrap; box-shadow: var(--shadow); font-family: 'Outfit', sans-serif;
     }
     .toast.show { opacity: 1; }
 
-    /* Android Alarm Note */
-    .android-note {
-      font-size: 11px;
-      color: var(--text3);
-      margin-top: 8px;
-      padding: 8px;
-      background: var(--bg2);
-      border-radius: var(--radius-md);
-      border-left: 3px solid var(--alarm);
-    }
-
     @media (max-width: 400px) {
       .stats { flex-direction: column; }
-      .form-row input, .form-row select { min-width: 100%; }
+      .form-row input { min-width: 100%; }
     }
   </style>
 </head>
 <body>
-<div class="app" id="app">
+
+<div class="app">
   <div class="header">
-    <h1>Medicine Tracker</h1>
-    <p>💊 Hybrid Reminders: WhatsApp + Email + Android Alarm</p>
-    <div class="date-bar" id="date-bar"></div>
+    <div class="header-left">
+      <h1>MedTrack</h1>
+      <p>💊 Smart reminders · WhatsApp · Email · Alarm</p>
+      <div class="date-pill" id="date-pill"></div>
+    </div>
+    <button class="settings-trigger" onclick="openSettings()">⚙️</button>
   </div>
 
-  <!-- Settings Section -->
-  <div class="settings-section">
-    <div class="settings-title">
-      <span>🔧 Reminder Settings</span>
-    </div>
-    
-    <!-- WhatsApp Setting -->
-    <div class="setting-item">
-      <div class="setting-icon whatsapp">💬</div>
-      <div class="setting-content">
-        <div class="setting-label">WhatsApp</div>
-        <div class="setting-status" id="whatsapp-status">Not configured</div>
-        <input type="text" id="whatsapp-number" class="setting-input" placeholder="Enter WhatsApp number (e.g., 919876543210)" style="display:none;">
-      </div>
-      <button class="setting-btn whatsapp" onclick="window.app.configureWhatsApp()" id="whatsapp-btn">Configure</button>
-    </div>
-
-    <!-- Email Setting (Manual for now) -->
-    <div class="setting-item">
-      <div class="setting-icon email">📧</div>
-      <div class="setting-content">
-        <div class="setting-label">Email</div>
-        <div class="setting-status" id="email-status">Not configured</div>
-        <input type="email" id="email-address" class="setting-input" placeholder="your@email.com" style="display:none;">
-      </div>
-      <button class="setting-btn email" onclick="window.app.configureEmail()" id="email-btn">Configure</button>
-    </div>
-
-    <!-- Android Alarm Setting -->
-    <div class="setting-item">
-      <div class="setting-icon alarm">⏰</div>
-      <div class="setting-content">
-        <div class="setting-label">Android Alarm</div>
-        <div class="setting-status" id="alarm-status">Available on Android</div>
-      </div>
-      <button class="setting-btn alarm" onclick="window.app.testAndroidAlarm()">Test Alarm</button>
-    </div>
-
-    <!-- Android Note -->
-    <div class="android-note">
-      <strong>📱 Android Users:</strong> For reliable alarms, install this app and enable notifications.
-    </div>
+  <div class="status-bar">
+    <div class="status-dot amber" id="status-dot"></div>
+    <div class="status-bar-text" id="status-bar-text">Checking reminder setup…</div>
   </div>
-
-  <div id="notif-banner"></div>
 
   <div class="stats">
-    <div class="stat"><div class="stat-num" id="stat-taken">0</div><div class="stat-lbl">taken today</div></div>
-    <div class="stat"><div class="stat-num" id="stat-remaining">0</div><div class="stat-lbl">remaining</div></div>
-    <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl">total medicines</div></div>
+    <div class="stat"><div class="stat-num" id="s-taken">0</div><div class="stat-lbl">Taken</div></div>
+    <div class="stat"><div class="stat-num amber" id="s-left">0</div><div class="stat-lbl">Remaining</div></div>
+    <div class="stat"><div class="stat-num normal" id="s-total">0</div><div class="stat-lbl">Total</div></div>
   </div>
-  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
 
   <div class="section-title">Today's schedule</div>
   <div id="med-list"></div>
 
-  <div class="section-title">Add a medicine</div>
-  <button id="toggle-form">+ Add new medicine</button>
-  <div id="add-form-container" style="display:none;">
+  <div class="section-title">Add medicine</div>
+  <button class="add-toggle" id="add-toggle" onclick="toggleForm()">＋ Add new medicine</button>
+  <div id="add-form" style="display:none;">
     <div class="add-form">
       <div class="form-row">
-        <input type="text" id="inp-name" placeholder="Medicine name (e.g. BP Medicine)" />
+        <input type="text" id="inp-name" placeholder="Medicine name (e.g. Metformin)">
       </div>
       <div class="form-row">
-        <input type="text" id="inp-dose" placeholder="Dosage (e.g. 500mg, 1 tablet)" />
-        <input type="time" id="inp-time" />
+        <input type="text" id="inp-dose" placeholder="Dosage (e.g. 500mg, 1 tablet)">
+        <input type="time" id="inp-time">
       </div>
-      <button class="btn-add" id="btn-add">Add medicine</button>
+      <button class="btn-add" onclick="addMedicine()">Add Medicine</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settings-overlay" onclick="maybeCloseSettings(event)">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-title">⚙️ Settings</div>
+    <div class="modal-sub">Configure your reminders and notification preferences</div>
+
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('wa')">💬 WhatsApp</button>
+      <button class="tab" onclick="switchTab('mail')">📧 Email</button>
+      <button class="tab" onclick="switchTab('alarm')">⏰ Alarm</button>
+      <button class="tab" onclick="switchTab('notif')">🔔 Alerts</button>
+    </div>
+
+    <!-- WhatsApp Tab -->
+    <div class="tab-panel active" id="tab-wa">
+      <div class="setting-block">
+        <div class="setting-block-title">WhatsApp Reminder</div>
+        <div class="setting-block-desc">
+          Enter your WhatsApp number. When a reminder fires, it opens WhatsApp with the message pre-filled — just tap <strong>Send</strong>.
+        </div>
+        <div id="wa-status-pill" class="status-pill not">● Not configured</div>
+        <div class="field-label">WhatsApp Number (with country code, no + or spaces)</div>
+        <input type="text" class="setting-input" id="wa-phone" placeholder="e.g. 919876543210">
+        <button class="save-btn green" onclick="saveWA()">💬 Save WhatsApp Number</button>
+        <div class="platform-note info" style="margin-top:12px;">
+          Opens WhatsApp with a pre-written reminder message. Just hit <strong>Send</strong>. No API or extra account needed.
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Tab -->
+    <div class="tab-panel" id="tab-mail">
+      <div class="setting-block">
+        <div class="setting-block-title">Auto Email Reminder</div>
+        <div class="setting-block-desc">
+          Enter your email address. MedTrack will send reminder emails automatically when your medicine is due — no tapping required.
+        </div>
+        <div id="mail-status-pill" class="status-pill not">● Not configured</div>
+        <div class="field-label">Your Email Address</div>
+        <input type="email" class="setting-input" id="mail-to" placeholder="you@email.com">
+        <button class="save-btn green" onclick="saveMail()">📧 Save Email</button>
+        <div class="platform-note info" style="margin-top:12px;">
+          Emails send automatically in the background when a reminder fires. Check your spam folder the first time.
+        </div>
+      </div>
+    </div>
+
+    <!-- Alarm Tab -->
+    <div class="tab-panel" id="tab-alarm">
+      <div class="setting-block">
+        <div class="setting-block-title">⏰ Android Alarm</div>
+        <div class="setting-block-desc">Tap the ⏰ button on any medicine card to open your Clock app with the alarm pre-filled.</div>
+        <div class="platform-note">
+          <strong>Android only.</strong> Opens the built-in Clock app directly — no extra apps needed.
+        </div>
+      </div>
+      <div class="setting-block">
+        <div class="setting-block-title">📱 iPhone / iPad</div>
+        <div class="setting-block-desc">iOS doesn't allow apps to set alarms directly. Use these alternatives:</div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <li style="font-size:13px; color:var(--text2);">✅ Auto email (set up above)</li>
+          <li style="font-size:13px; color:var(--text2);">✅ Browser notification alerts</li>
+          <li style="font-size:13px; color:var(--text2);">✅ WhatsApp reminder (tap Send)</li>
+          <li style="font-size:13px; color:var(--text2);">🗣️ Ask Siri: "Set alarm for [time]"</li>
+        </ul>
+        <div class="platform-note ios">
+          The ⏰ button on iOS downloads a <code>.ics</code> calendar file — open it to add an alarm to your Calendar app.
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Tab -->
+    <div class="tab-panel" id="tab-notif">
+      <div class="setting-block">
+        <div class="notif-row">
+          <div class="notif-row-left">
+            <div class="notif-row-title">Browser Notifications</div>
+            <div class="notif-row-desc">Show alert popup when medicine is due</div>
+          </div>
+          <button class="toggle-switch" id="notif-toggle" onclick="toggleNotifications()"></button>
+        </div>
+        <div class="notif-row">
+          <div class="notif-row-left">
+            <div class="notif-row-title">Sound Alert</div>
+            <div class="notif-row-desc">Play beep sound when reminder fires</div>
+          </div>
+          <button class="toggle-switch on" id="sound-toggle" onclick="toggleSound()"></button>
+        </div>
+        <div class="notif-row">
+          <div class="notif-row-left">
+            <div class="notif-row-title">Auto Email on Reminder</div>
+            <div class="notif-row-desc">Automatically send email when medicine is due</div>
+          </div>
+          <button class="toggle-switch" id="auto-mail-toggle" onclick="toggleAutoMail()"></button>
+        </div>
+      </div>
+      <button class="save-btn green" onclick="testReminder()">🔔 Test Reminder Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- REMINDER POPUP -->
+<div class="reminder-overlay" id="reminder-overlay">
+  <div class="reminder-card">
+    <div class="reminder-bell">💊</div>
+    <div class="reminder-med">
+      <div class="reminder-name" id="rem-name">Medicine Name</div>
+      <div class="reminder-dose" id="rem-dose">Dosage</div>
+      <div class="reminder-time" id="rem-time">Scheduled time</div>
+    </div>
+    <div class="reminder-btns">
+      <button class="reminder-btn wa"   onclick="reminderAction('wa')">💬 Send WhatsApp Reminder</button>
+      <button class="reminder-btn mail" onclick="reminderAction('mail')">📧 Send Email Reminder</button>
+      <button class="reminder-btn alrm" id="rem-alrm-btn" onclick="reminderAction('alarm')">⏰ Set Alarm</button>
+      <button class="reminder-btn ok"   onclick="reminderAction('taken')">✓ I Already Took It</button>
+    </div>
+    <div class="reminder-dismiss"><button onclick="closeReminder()">Dismiss for now</button></div>
+  </div>
+</div>
+
 <script>
-(function() {
-  // App namespace
-  window.app = {};
-  
-  const STORAGE_KEY_MEDS = 'medtracker_medicines';
-  const STORAGE_KEY_TAKEN_PREFIX = 'medtracker_taken_';
-  
-  // Settings keys
-  const STORAGE_KEY_WHATSAPP = 'medtracker_whatsapp';
-  const STORAGE_KEY_EMAIL = 'medtracker_email';
+// ═══════════════════════════════════════
+//  EmailJS credentials (hardcoded)
+// ═══════════════════════════════════════
+const EJS_PUBLIC_KEY  = 'kRkcdJL51FKHrX-IG';
+const EJS_SERVICE_ID  = 'service_eakk3up';
+const EJS_TEMPLATE_ID = 'template_zf2m34l';
+// ═══════════════════════════════════════
 
-  let medicines = [];
-  let takenToday = {};
-  let todayKey = '';
-  let alreadyNotified = new Set();
-  let checkInterval = null;
-  
-  // Settings
-  let whatsappNumber = '';
-  let emailAddress = '';
+const SK_MEDS     = 'mt_meds_v1';
+const SK_TAKEN    = 'mt_taken_';
+const SK_WA       = 'mt_wa_phone';
+const SK_MAIL     = 'mt_mail_to';
+const SK_SOUND    = 'mt_sound';
+const SK_AUTOMAIL = 'mt_auto_mail';
+const SK_NOTED    = 'mt_notified_';
 
-  // Load settings
+let meds          = [];
+let taken         = {};
+let todayKey      = '';
+let notifiedToday = new Set();
+let currentRemMed = null;
+
+const isAndroid = /android/i.test(navigator.userAgent);
+const isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+let waPhone  = '';
+let mailTo   = '';
+let sound    = true;
+let autoMail = false;
+
+// ── INIT ──────────────────────────────
+function init() {
+  todayKey = new Date().toISOString().slice(0, 10);
+  load();
+  document.getElementById('date-pill').textContent =
+    new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+  try { emailjs.init(EJS_PUBLIC_KEY); } catch(e) {}
+  render();
+  updateStatusBar();
+  requestNotifPermission();
+  startChecker();
+}
+
+function load() {
   try {
-    whatsappNumber = localStorage.getItem(STORAGE_KEY_WHATSAPP) || '';
-    emailAddress = localStorage.getItem(STORAGE_KEY_EMAIL) || '';
-  } catch (e) {}
+    meds          = JSON.parse(localStorage.getItem(SK_MEDS) || '[]');
+    taken         = JSON.parse(localStorage.getItem(SK_TAKEN + todayKey) || '{}');
+    notifiedToday = new Set(JSON.parse(localStorage.getItem(SK_NOTED + todayKey) || '[]'));
+    waPhone       = localStorage.getItem(SK_WA)       || '';
+    mailTo        = localStorage.getItem(SK_MAIL)     || '';
+    sound         = localStorage.getItem(SK_SOUND)    !== 'false';
+    autoMail      = localStorage.getItem(SK_AUTOMAIL) === 'true';
+  } catch(e) {}
+}
 
-  function getTodayKey() {
-    return new Date().toISOString().slice(0, 10);
+function persist() {
+  try {
+    localStorage.setItem(SK_MEDS, JSON.stringify(meds));
+    localStorage.setItem(SK_TAKEN + todayKey, JSON.stringify(taken));
+    localStorage.setItem(SK_NOTED + todayKey, JSON.stringify([...notifiedToday]));
+  } catch(e) {}
+}
+
+function persistSettings() {
+  try {
+    localStorage.setItem(SK_WA,       waPhone);
+    localStorage.setItem(SK_MAIL,     mailTo);
+    localStorage.setItem(SK_SOUND,    sound    ? 'true' : 'false');
+    localStorage.setItem(SK_AUTOMAIL, autoMail ? 'true' : 'false');
+  } catch(e) {}
+}
+
+// ── CHECKER (every 30s) ───────────────
+function startChecker() {
+  checkNow();
+  setInterval(checkNow, 30_000);
+}
+
+function checkNow() {
+  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+  for (const med of meds) {
+    if (taken[med.id] || notifiedToday.has(med.id)) continue;
+    const [h, m] = med.time.split(':').map(Number);
+    if (nowMin >= h * 60 + m && nowMin < h * 60 + m + 5) fireReminder(med);
   }
+  updateStatusBar();
+}
 
-  function fmt12(time24) {
-    if (!time24) return '';
-    const [h, m] = time24.split(':').map(Number);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const h12 = h % 12 || 12;
-    return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
-  }
+function fireReminder(med) {
+  notifiedToday.add(med.id);
+  persist();
+  if (sound) playBeep();
+  showBrowserNotif(med);
+  if (autoMail && mailTo) autoSendEmail(med);
+  showReminderPopup(med);
+}
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  function playBeep() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
-      [0, 0.22, 0.44].forEach((delay, i) => {
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.connect(g);
-        g.connect(ctx.destination);
-        o.type = 'sine';
-        o.frequency.value = 520 + i * 80;
-        g.gain.setValueAtTime(0.45, ctx.currentTime + delay);
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.38);
-        o.start(ctx.currentTime + delay);
-        o.stop(ctx.currentTime + delay + 0.42);
-      });
-    } catch (e) {}
-  }
-
-  // ============ WHATSAPP ============
-  function sendWhatsAppReminder(medicine, type = 'reminder') {
-    if (!whatsappNumber) {
-      showToast('Please configure WhatsApp first');
-      return false;
-    }
-
-    const templates = {
-      reminder: `⏰ *MEDICINE REMINDER* ⏰%0A%0A` +
-                `💊 *Medicine:* ${medicine.name}%0A` +
-                `📋 *Dose:* ${medicine.dose || 'As prescribed'}%0A` +
-                `⏱️ *Time:* ${fmt12(medicine.time)}%0A%0A` +
-                `👇 Tap SEND to remind yourself!`,
-      
-      overdue: `⚠️ *OVERDUE MEDICINE* ⚠️%0A%0A` +
-               `💊 *${medicine.name}* was due at ${fmt12(medicine.time)}%0A` +
-               `📋 *Dose:* ${medicine.dose || 'Take now'}%0A%0A` +
-               `Please take it as soon as possible!`,
-      
-      taken: `✅ *MEDICINE TAKEN* ✅%0A%0A` +
-             `💊 *${medicine.name}*%0A` +
-             `⏱️ *Taken at:* ${new Date().toLocaleTimeString()}%0A%0A` +
-             `👍 Great job staying healthy!`
-    };
-
-    const message = templates[type] || templates.reminder;
-    const waLink = `https://wa.me/${whatsappNumber}?text=${message}`;
-    
-    window.open(waLink, '_blank');
-    showToast('👉 WhatsApp opened - just tap Send!');
-    return true;
-  }
-
-  // ============ EMAIL (via mailto) ============
-  function sendEmailReminder(medicine, type = 'reminder') {
-    if (!emailAddress) {
-      showToast('Please configure email first');
-      return false;
-    }
-
-    const templates = {
-      reminder: {
-        subject: `⏰ Medicine Reminder: ${medicine.name}`,
-        body: `Time to take your medicine!\n\n` +
-              `Medicine: ${medicine.name}\n` +
-              `Dose: ${medicine.dose || 'As prescribed'}\n` +
-              `Scheduled Time: ${fmt12(medicine.time)}\n\n` +
-              `Don't forget to take it!`
-      },
-      overdue: {
-        subject: `⚠️ OVERDUE: ${medicine.name}`,
-        body: `Your medicine is overdue!\n\n` +
-              `Medicine: ${medicine.name}\n` +
-              `Dose: ${medicine.dose || 'Take now'}\n` +
-              `Due Time: ${fmt12(medicine.time)}\n\n` +
-              `Please take it as soon as possible.`
-      }
-    };
-
-    const template = templates[type] || templates.reminder;
-    const mailtoLink = `mailto:${emailAddress}?subject=${encodeURIComponent(template.subject)}&body=${encodeURIComponent(template.body)}`;
-    
-    window.open(mailtoLink, '_blank');
-    showToast('📧 Email client opened - just tap Send!');
-    return true;
-  }
-
-  // ============ ANDROID ALARM ============
-  function setAndroidAlarm(medicine) {
-    // Check if on Android
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    
-    if (!isAndroid) {
-      showToast('⏰ Android alarm only works on Android devices');
-      return false;
-    }
-
-    // Create calendar event with alarm
-    const [hours, minutes] = medicine.time.split(':').map(Number);
-    const alarmTime = new Date();
-    alarmTime.setHours(hours, minutes, 0, 0);
-    
-    if (alarmTime < new Date()) {
-      alarmTime.setDate(alarmTime.getDate() + 1);
-    }
-
-    const year = alarmTime.getFullYear();
-    const month = String(alarmTime.getMonth() + 1).padStart(2, '0');
-    const day = String(alarmTime.getDate()).padStart(2, '0');
-    const hour = String(alarmTime.getHours()).padStart(2, '0');
-    const minute = String(alarmTime.getMinutes()).padStart(2, '0');
-    const second = '00';
-    
-    // Create .ics file with alarm
-    const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Medicine Tracker//EN
-BEGIN:VEVENT
-UID:${Date.now()}@medtracker
-DTSTAMP:${year}${month}${day}T${hour}${minute}${second}
-DTSTART:${year}${month}${day}T${hour}${minute}${second}
-SUMMARY:💊 ${medicine.name}
-DESCRIPTION:${medicine.dose || 'Medicine reminder'}
-BEGIN:VALARM
-TRIGGER:-PT0M
-ACTION:DISPLAY
-DESCRIPTION:Time to take ${medicine.name}
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
-
-    const blob = new Blob([icsContent], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `medicine_${medicine.name.replace(/\s+/g, '_')}.ics`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showToast('📅 Calendar file downloaded - open to set alarm!');
-    return true;
-  }
-
-  // ============ CONFIGURATION FUNCTIONS ============
-  window.app.configureWhatsApp = function() {
-    const input = document.getElementById('whatsapp-number');
-    const btn = document.getElementById('whatsapp-btn');
-    const status = document.getElementById('whatsapp-status');
-    
-    if (input.style.display === 'none') {
-      input.style.display = 'block';
-      input.value = whatsappNumber;
-      btn.textContent = 'Save';
-    } else {
-      const number = input.value.trim().replace(/\D/g, '');
-      if (number) {
-        whatsappNumber = number;
-        localStorage.setItem(STORAGE_KEY_WHATSAPP, number);
-        status.textContent = `Configured: ${number}`;
-        showToast('WhatsApp number saved!');
-      }
-      input.style.display = 'none';
-      btn.textContent = 'Configure';
-      updateBanner();
-    }
+// ── WHATSAPP (wa.me link) ─────────────
+function sendWhatsApp(med, type = 'reminder') {
+  if (!waPhone) { showToast('⚠️ Add your WhatsApp number in Settings'); return; }
+  const msgs = {
+    reminder: `⏰ *MedTrack Reminder!*\n\n💊 *${med.name}*\n📋 Dose: ${med.dose || 'As prescribed'}\n⏱️ Time: ${fmt12(med.time)}\n\nPlease take it now! 🙏`,
+    taken:    `✅ *Taken:* ${med.name} at ${new Date().toLocaleTimeString()}. Great job! 💪`,
   };
+  window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msgs[type] || msgs.reminder)}`, '_blank');
+  showToast('💬 WhatsApp opened — tap Send!');
+}
 
-  window.app.configureEmail = function() {
-    const input = document.getElementById('email-address');
-    const btn = document.getElementById('email-btn');
-    const status = document.getElementById('email-status');
-    
-    if (input.style.display === 'none') {
-      input.style.display = 'block';
-      input.value = emailAddress;
-      btn.textContent = 'Save';
-    } else {
-      const email = input.value.trim();
-      if (email && email.includes('@')) {
-        emailAddress = email;
-        localStorage.setItem(STORAGE_KEY_EMAIL, email);
-        status.textContent = `Configured: ${email}`;
-        showToast('Email saved!');
-      }
-      input.style.display = 'none';
-      btn.textContent = 'Configure';
-      updateBanner();
-    }
-  };
+// ── EMAIL (EmailJS — auto) ────────────
+async function autoSendEmail(med) {
+  if (!mailTo) { showToast('⚠️ Add your email in Settings'); return; }
+  try {
+    await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+      to_email: mailTo,
+      medicine: med.name,
+      dose:     med.dose || 'As prescribed',
+      time:     fmt12(med.time),
+    });
+    showToast('📧 Reminder email sent!');
+  } catch(e) {
+    fallbackEmail(med);
+  }
+}
 
-  window.app.testAndroidAlarm = function() {
-    const testMed = {
-      name: 'Test Medicine',
-      dose: 'Test Dose',
-      time: new Date().toTimeString().slice(0, 5)
-    };
-    setAndroidAlarm(testMed);
-  };
+function fallbackEmail(med) {
+  if (!mailTo) { showToast('⚠️ Add your email in Settings'); return; }
+  const sub  = encodeURIComponent(`⏰ MedTrack Reminder: ${med.name}`);
+  const body = encodeURIComponent(`Time to take your medicine!\n\nMedicine: ${med.name}\nDose: ${med.dose || 'As prescribed'}\nScheduled: ${fmt12(med.time)}\n\nStay healthy! 💊`);
+  window.open(`mailto:${mailTo}?subject=${sub}&body=${body}`, '_blank');
+  showToast('📧 Email client opened — tap Send!');
+}
 
-  // ============ REMINDER FUNCTIONS ============
-  function showReminderPopup(medicine) {
-    // Remove any existing popup
-    const existingPopup = document.querySelector('.reminder-popup');
-    if (existingPopup) {
-      existingPopup.remove();
-    }
+// ── ALARM ─────────────────────────────
+function setAlarm(med) {
+  const [h, m] = med.time.split(':').map(Number);
+  if (isAndroid) {
+    window.location.href =
+      `intent:#Intent;` +
+      `action=android.intent.action.SET_ALARM;` +
+      `S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent('💊 ' + med.name)};` +
+      `i.android.intent.extra.alarm.HOUR=${h};` +
+      `i.android.intent.extra.alarm.MINUTES=${m};` +
+      `i.android.intent.extra.alarm.VIBRATE=1;` +
+      `i.android.intent.extra.alarm.SKIP_UI=0;` +
+      `end`;
+    showToast('⏰ Opening Clock app…');
+  } else {
+    const pad = n => String(n).padStart(2, '0');
+    const d = new Date(); d.setHours(h, m, 0, 0);
+    if (d < new Date()) d.setDate(d.getDate() + 1);
+    const dt  = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(m)}00`;
+    const ics = [
+      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MedTrack//EN',
+      'BEGIN:VEVENT', `UID:${Date.now()}@medtrack`, `DTSTAMP:${dt}`, `DTSTART:${dt}`,
+      `SUMMARY:💊 ${med.name}`, `DESCRIPTION:${med.dose || 'Take your medicine'}`,
+      'BEGIN:VALARM','TRIGGER:-PT0M','ACTION:DISPLAY',`DESCRIPTION:Time for ${med.name}`,'END:VALARM',
+      'END:VEVENT','END:VCALENDAR'
+    ].join('\r\n');
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })),
+      download: `${med.name.replace(/\s+/g,'_')}_alarm.ics`
+    });
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    showToast(isIOS ? '📅 Open the file to add to Calendar' : '📅 Calendar file downloaded');
+  }
+}
 
-    const popup = document.createElement('div');
-    popup.className = 'reminder-popup';
-    popup.innerHTML = `
-      <button class="reminder-close" onclick="this.closest('.reminder-popup').remove()">✕</button>
-      <div class="reminder-title">⏰ Medicine Time!</div>
-      <div class="reminder-med-info">
-        <div class="reminder-med-name">${escapeHtml(medicine.name)}</div>
-        <div class="reminder-med-dose">${escapeHtml(medicine.dose || 'No dosage specified')}</div>
-        <div class="reminder-med-time">Scheduled at ${fmt12(medicine.time)}</div>
-      </div>
-      <div class="reminder-methods">
-        <button class="reminder-method-btn whatsapp" onclick="window.app.sendReminder('whatsapp', '${medicine.id}')">
-          <span class="reminder-method-icon">💬</span>
-          <span>WhatsApp Reminder</span>
-        </button>
-        <button class="reminder-method-btn email" onclick="window.app.sendReminder('email', '${medicine.id}')">
-          <span class="reminder-method-icon">📧</span>
-          <span>Email Reminder</span>
-        </button>
-        <button class="reminder-method-btn alarm" onclick="window.app.sendReminder('alarm', '${medicine.id}')">
-          <span class="reminder-method-icon">⏰</span>
-          <span>Set Android Alarm</span>
-        </button>
-        <button class="reminder-method-btn taken" onclick="window.app.toggleMed('${medicine.id}')">
-          <span class="reminder-method-icon">✓</span>
-          <span>I already took it</span>
-        </button>
-      </div>
-    `;
-    document.body.appendChild(popup);
+// ── BROWSER NOTIFICATIONS ─────────────
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') await Notification.requestPermission();
+  updateNotifToggle();
+}
+
+function showBrowserNotif(med) {
+  if (Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification(`💊 Time for ${med.name}`, {
+      body: `${med.dose || ''} · Scheduled: ${fmt12(med.time)}`,
+      requireInteraction: true, tag: `med_${med.id}`,
+    });
+    n.onclick = () => { window.focus(); n.close(); };
+  } catch(e) {}
+}
+
+// ── SOUND ─────────────────────────────
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    [[0,520],[0.22,620],[0.44,720]].forEach(([delay,freq]) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.4, ctx.currentTime + delay);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.4);
+      o.start(ctx.currentTime + delay); o.stop(ctx.currentTime + delay + 0.45);
+    });
+  } catch(e) {}
+}
+
+// ── REMINDER POPUP ────────────────────
+function showReminderPopup(med) {
+  currentRemMed = med;
+  document.getElementById('rem-name').textContent = med.name;
+  document.getElementById('rem-dose').textContent = med.dose || 'No dosage specified';
+  document.getElementById('rem-time').textContent = `Scheduled: ${fmt12(med.time)}`;
+  document.getElementById('rem-alrm-btn').textContent = isAndroid ? '⏰ Set Android Alarm' : '📅 Add to Calendar';
+  document.getElementById('reminder-overlay').classList.add('show');
+}
+
+function closeReminder() {
+  document.getElementById('reminder-overlay').classList.remove('show');
+  currentRemMed = null;
+}
+
+function reminderAction(action) {
+  const med = currentRemMed;
+  if (!med) return;
+  if (action === 'wa')    sendWhatsApp(med, 'reminder');
+  if (action === 'mail')  autoSendEmail(med);
+  if (action === 'alarm') setAlarm(med);
+  if (action === 'taken') { markTaken(med.id); closeReminder(); }
+}
+
+// ── CRUD ──────────────────────────────
+function addMedicine() {
+  const name = document.getElementById('inp-name').value.trim();
+  const dose = document.getElementById('inp-dose').value.trim();
+  const time = document.getElementById('inp-time').value;
+  if (!name || !time) { showToast('Please enter a name and time'); return; }
+  meds.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,6), name, dose, time });
+  meds.sort((a,b) => a.time.localeCompare(b.time));
+  persist(); render();
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-dose').value = '';
+  document.getElementById('inp-time').value = '';
+  showToast(`💊 ${name} added!`);
+  toggleForm(true);
+}
+
+function markTaken(id) {
+  const med = meds.find(m => m.id === id);
+  if (!med) return;
+  if (taken[id]) { delete taken[id]; showToast(`Unmarked: ${med.name}`); }
+  else { taken[id] = Date.now(); if (sound) playBeep(); showToast(`✓ ${med.name} marked as taken!`); }
+  persist(); render();
+}
+
+function deleteMed(id) {
+  const med = meds.find(m => m.id === id);
+  if (!confirm(`Remove ${med?.name}?`)) return;
+  meds = meds.filter(m => m.id !== id);
+  delete taken[id]; notifiedToday.delete(id);
+  persist(); render();
+  showToast(`${med?.name} removed`);
+}
+
+// ── RENDER ────────────────────────────
+function render() {
+  const list   = document.getElementById('med-list');
+  const nowMin = new Date().getHours()*60 + new Date().getMinutes();
+
+  if (!meds.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">💊</div><p>No medicines added yet.<br>Add your first one below!</p></div>`;
+  } else {
+    list.innerHTML = meds.map(med => {
+      const isTaken   = !!taken[med.id];
+      const [mh,mm]   = med.time.split(':').map(Number);
+      const isOverdue = !isTaken && nowMin > mh*60+mm+5;
+      return `
+      <div class="med-card${isTaken?' taken':isOverdue?' overdue':''}">
+        <div class="med-row">
+          <div class="check-ring${isTaken?' done':''}" onclick="markTaken('${med.id}')"></div>
+          <div class="med-info">
+            <div class="med-name${isTaken?' done':''}">${esc(med.name)}</div>
+            <div class="med-sub${isTaken?' done':''}">${esc(med.dose||'No dosage specified')}</div>
+          </div>
+          <div class="time-badge${isTaken?' done':isOverdue?' overdue':''}">${fmt12(med.time)}${isOverdue?' ⚠️':''}</div>
+        </div>
+        <div class="med-actions">
+          <button class="act-btn wa"   onclick="sendWhatsApp(meds.find(m=>m.id==='${med.id}'),'reminder')">💬 WhatsApp</button>
+          <button class="act-btn mail" onclick="autoSendEmail(meds.find(m=>m.id==='${med.id}'))">📧 Email</button>
+          <button class="act-btn alrm" onclick="setAlarm(meds.find(m=>m.id==='${med.id}'))">⏰ Alarm</button>
+          <button class="act-btn del"  onclick="deleteMed('${med.id}')">🗑</button>
+        </div>
+      </div>`;
+    }).join('');
   }
 
-  window.app.sendReminder = function(method, medicineId) {
-    const medicine = medicines.find(m => m.id === medicineId);
-    if (!medicine) return;
+  const takenCount = Object.keys(taken).filter(id => meds.find(m=>m.id===id)).length;
+  const total = meds.length;
+  document.getElementById('s-taken').textContent = takenCount;
+  document.getElementById('s-left').textContent  = total - takenCount;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('progress-fill').style.width = total ? Math.round(takenCount/total*100)+'%' : '0%';
+}
 
-    // Close popup
-    const popup = document.querySelector('.reminder-popup');
-    if (popup) popup.remove();
-
-    switch(method) {
-      case 'whatsapp':
-        sendWhatsAppReminder(medicine);
-        break;
-      case 'email':
-        sendEmailReminder(medicine);
-        break;
-      case 'alarm':
-        setAndroidAlarm(medicine);
-        break;
-    }
-  };
-
-  window.app.toggleMed = function(id) {
-    const medicine = medicines.find(m => m.id === id);
-    if (!medicine) return;
-
-    if (takenToday[id]) {
-      delete takenToday[id];
-      showToast('Marked as not taken');
-    } else {
-      takenToday[id] = Date.now();
-      playBeep();
-      showToast('✓ ' + medicine.name + ' marked as taken');
-      
-      // Send confirmation via WhatsApp if configured
-      if (whatsappNumber) {
-        setTimeout(() => {
-          if (confirm('Send confirmation via WhatsApp?')) {
-            sendWhatsAppReminder(medicine, 'taken');
-          }
-        }, 1000);
-      }
-    }
-    
-    // Close any open popup
-    const popup = document.querySelector('.reminder-popup');
-    if (popup) popup.remove();
-    
-    saveTaken();
-    render();
-  };
-
-  window.app.deleteMed = function(id) {
-    if (!confirm('Remove this medicine?')) return;
-    
-    const medicine = medicines.find(m => m.id === id);
-    medicines = medicines.filter(x => x.id !== id);
-    delete takenToday[id];
-    saveMeds();
-    saveTaken();
-    if (medicine) showToast(medicine.name + ' removed');
-    render();
-  };
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+function updateStatusBar() {
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-bar-text');
+  const parts = [];
+  if (waPhone) parts.push('<strong>WhatsApp ✓</strong>');
+  if (mailTo)  parts.push('<strong>Auto Email ✓</strong>');
+  if (Notification.permission === 'granted') parts.push('<strong>Notifications ✓</strong>');
+  if (parts.length) {
+    dot.className = 'status-dot green';
+    text.innerHTML = 'Active: ' + parts.join(' · ');
+  } else {
+    dot.className = 'status-dot amber';
+    text.innerHTML = 'No reminders configured yet — tap ⚙️ to set up';
   }
+}
 
-  // ============ DATA MANAGEMENT ============
-  function loadData() {
-    todayKey = getTodayKey();
-    try {
-      const raw = localStorage.getItem(
+// ── SETTINGS ──────────────────────────
+function openSettings() {
+  document.getElementById('wa-phone').value = waPhone;
+  document.getElementById('mail-to').value  = mailTo;
+
+  const waPill   = document.getElementById('wa-status-pill');
+  const mailPill = document.getElementById('mail-status-pill');
+  waPill.className   = waPhone ? 'status-pill ok' : 'status-pill not';
+  waPill.textContent = waPhone ? `● +${waPhone}` : '● Not configured';
+  mailPill.className   = mailTo ? 'status-pill ok' : 'status-pill not';
+  mailPill.textContent = mailTo ? `● ${mailTo}` : '● Not configured';
+
+  updateNotifToggle();
+  document.getElementById('sound-toggle').className     = 'toggle-switch' + (sound    ? ' on' : '');
+  document.getElementById('auto-mail-toggle').className = 'toggle-switch' + (autoMail ? ' on' : '');
+
+  document.getElementById('settings-overlay').classList.add('show');
+}
+
+function maybeCloseSettings(e) {
+  if (e.target === document.getElementById('settings-overlay')) closeSettings();
+}
+function closeSettings() { document.getElementById('settings-overlay').classList.remove('show'); }
+
+function switchTab(name) {
+  ['wa','mail','alarm','notif'].forEach((n,i) => {
+    document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
+    document.getElementById('tab-'+n).classList.toggle('active', n===name);
+  });
+}
+
+function saveWA() {
+  const val = document.getElementById('wa-phone').value.trim().replace(/\D/g,'');
+  if (!val) { showToast('Please enter a valid number'); return; }
+  waPhone = val; persistSettings(); updateStatusBar();
+  showToast('💬 WhatsApp number saved!'); openSettings();
+}
+
+function saveMail() {
+  const val = document.getElementById('mail-to').value.trim();
+  if (!val || !val.includes('@')) { showToast('Please enter a valid email'); return; }
+  mailTo = val; persistSettings(); updateStatusBar();
+  showToast('📧 Email saved!'); openSettings();
+}
+
+function updateNotifToggle() {
+  const t = document.getElementById('notif-toggle');
+  if (t) t.className = 'toggle-switch' + (Notification.permission==='granted' ? ' on' : '');
+}
+function toggleNotifications() { requestNotifPermission(); }
+function toggleSound() {
+  sound = !sound; persistSettings();
+  document.getElementById('sound-toggle').className = 'toggle-switch' + (sound ? ' on' : '');
+}
+function toggleAutoMail() {
+  autoMail = !autoMail; persistSettings();
+  document.getElementById('auto-mail-toggle').className = 'toggle-switch' + (autoMail ? ' on' : '');
+  if (autoMail && !mailTo) showToast('⚠️ Add your email first!');
+}
+
+function testReminder() {
+  const dummy = { id:'_test', name:'Test Medicine', dose:'1 tablet', time: new Date().toTimeString().slice(0,5) };
+  if (sound) playBeep();
+  showBrowserNotif(dummy);
+  showReminderPopup(dummy);
+  closeSettings();
+}
+
+// ── UTILS ─────────────────────────────
+function fmt12(t) {
+  if (!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toggleForm(close) {
+  const f = document.getElementById('add-form');
+  const isOpen = f.style.display !== 'none';
+  if (close || isOpen) {
+    f.style.display = 'none';
+    document.getElementById('add-toggle').textContent = '＋ Add new medicine';
+  } else {
+    f.style.display = 'block';
+    document.getElementById('add-toggle').textContent = '✕ Cancel';
+    document.getElementById('inp-name').focus();
+  }
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeReminder(); closeSettings(); }
+});
+
+// Expose for inline onclick handlers
+window.meds          = meds;
+window.sendWhatsApp  = sendWhatsApp;
+window.autoSendEmail = autoSendEmail;
+window.setAlarm      = setAlarm;
+window.markTaken     = markTaken;
+window.deleteMed     = deleteMed;
+
+init();
+</script>
+</body>
+</html>

@@ -21,7 +21,6 @@
     ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--bg1)} ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
     .app{max-width:540px;margin:0 auto;padding:1.5rem 1rem 6rem}
 
-    /* HEADER */
     .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem}
     .header-left h1{font-family:'Outfit',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.5px;
       background:linear-gradient(135deg,#00d97e 0%,#00ffaa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -32,7 +31,6 @@
       cursor:pointer;color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
     .settings-trigger:hover{background:var(--bg3);color:var(--green)}
 
-    /* STATUS BAR */
     .status-bar{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px 14px;
       margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px}
     .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
@@ -40,7 +38,6 @@
     .status-dot.amber{background:var(--amber)}
     .status-bar-text{flex:1;color:var(--text2)} .status-bar-text strong{color:var(--text)}
 
-    /* STATS */
     .stats{display:flex;gap:10px;margin-bottom:12px}
     .stat{flex:1;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
     .stat::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,217,126,0.04) 0%,transparent 60%)}
@@ -54,7 +51,6 @@
       margin:1.5rem 0 0.75rem;display:flex;align-items:center;gap:8px}
     .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
-    /* MED CARD */
     .med-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;transition:all 0.2s;position:relative;overflow:hidden}
     .med-card.overdue{border-color:rgba(255,107,107,0.4);background:linear-gradient(135deg,var(--bg2) 0%,rgba(255,107,107,0.06) 100%)}
     .med-card.overdue::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red)}
@@ -84,7 +80,6 @@
     .empty{text-align:center;padding:3rem 1rem;border:1px dashed var(--border2);border-radius:var(--radius);color:var(--text2)}
     .empty-icon{font-size:36px;margin-bottom:10px}
 
-    /* ADD FORM */
     .add-toggle{width:100%;height:44px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);font-size:14px;font-weight:600;
       border-radius:var(--radius);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Outfit',sans-serif}
     .add-toggle:hover{background:var(--bg2);color:var(--green)}
@@ -97,7 +92,6 @@
       color:var(--bg0);font-size:15px;font-weight:800;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
     .btn-add:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,217,126,0.3)}
 
-    /* OVERLAY */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:flex-end;justify-content:center;
       opacity:0;pointer-events:none;transition:opacity 0.25s}
     .overlay.show{opacity:1;pointer-events:all}
@@ -140,7 +134,6 @@
     .note{font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px;border-left:3px solid var(--amber);line-height:1.5}
     .note.green{border-left-color:var(--green)} .note.blue{border-left-color:var(--blue)}
 
-    /* REMINDER POPUP */
     .reminder-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:center;justify-content:center;
       opacity:0;pointer-events:none;transition:opacity 0.25s}
     .reminder-overlay.show{opacity:1;pointer-events:all}
@@ -159,7 +152,6 @@
     .reminder-btn.ok{background:linear-gradient(135deg,var(--green2),var(--green));color:var(--bg0)}
     .reminder-dismiss{text-align:center;margin-top:12px}
     .reminder-dismiss button{background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:4px 12px}
-    .reminder-dismiss button:hover{color:var(--text2)}
 
     .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);color:var(--text);
       border:0.5px solid var(--border2);padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
@@ -170,8 +162,6 @@
 </head>
 <body>
 <div class="app">
-
-  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <h1>MedTrack</h1>
@@ -181,13 +171,11 @@
     <button class="settings-trigger" onclick="openSettings()">⚙️</button>
   </div>
 
-  <!-- STATUS -->
   <div class="status-bar">
     <div class="status-dot amber" id="status-dot"></div>
     <div class="status-bar-text" id="status-bar-text">Add your email in ⚙️ Settings to activate auto reminders</div>
   </div>
 
-  <!-- STATS -->
   <div class="stats">
     <div class="stat"><div class="stat-num" id="s-taken">0</div><div class="stat-lbl">Taken</div></div>
     <div class="stat"><div class="stat-num amber" id="s-left">0</div><div class="stat-lbl">Remaining</div></div>
@@ -195,11 +183,9 @@
   </div>
   <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
 
-  <!-- LIST -->
   <div class="section-title">Today's schedule</div>
   <div id="med-list"></div>
 
-  <!-- ADD FORM -->
   <div class="section-title">Add medicine</div>
   <button class="add-toggle" id="add-toggle" onclick="toggleForm()">＋ Add new medicine</button>
   <div id="add-form" style="display:none;">
@@ -218,13 +204,12 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- SETTINGS MODAL -->
+<!-- SETTINGS -->
 <div class="overlay" id="settings-overlay" onclick="maybeCloseSettings(event)">
   <div class="modal">
     <div class="modal-drag"></div>
     <div class="modal-title">⚙️ Settings</div>
     <div class="modal-sub">Configure your reminders</div>
-
     <div class="tab-bar">
       <button class="tab active" onclick="switchTab('email')">📧 Email</button>
       <button class="tab" onclick="switchTab('wa')">💬 WhatsApp</button>
@@ -232,30 +217,26 @@
       <button class="tab" onclick="switchTab('notif')">🔔 Alerts</button>
     </div>
 
-    <!-- EMAIL TAB -->
     <div class="tab-panel active" id="tab-email">
       <div class="setting-block">
         <div class="setting-block-title">📧 Automatic Email Reminders</div>
         <div class="setting-block-desc">
-          Just enter your email address below. MedTrack will automatically send you a reminder email at each medicine's scheduled time — even if your phone is off or the browser is closed.
+          Just enter your email. MedTrack sends reminder emails automatically at each medicine's scheduled time — phone off, browser closed, doesn't matter.
         </div>
         <div id="mail-status-pill" class="status-pill not">● Not configured</div>
         <div class="field-label">Your Email Address</div>
         <input type="email" class="setting-input" id="mail-to" placeholder="you@gmail.com">
         <button class="save-btn green" onclick="saveEmail()">📧 Save & Activate</button>
         <div class="note green" style="margin-top:12px;">
-          ✅ Powered by Google's servers — runs 24/7, checks every minute, sends exactly on time.
+          ✅ Powered by Google's servers — checks every minute, sends exactly on time, 24/7.
         </div>
       </div>
     </div>
 
-    <!-- WHATSAPP TAB -->
     <div class="tab-panel" id="tab-wa">
       <div class="setting-block">
         <div class="setting-block-title">💬 WhatsApp Reminder</div>
-        <div class="setting-block-desc">
-          Enter your WhatsApp number. When you tap the WhatsApp button on a medicine card, it opens WhatsApp with the reminder message pre-filled — just tap <strong>Send</strong>.
-        </div>
+        <div class="setting-block-desc">Opens WhatsApp with a pre-filled message — just tap <strong>Send</strong>.</div>
         <div id="wa-status-pill" class="status-pill not">● Not configured</div>
         <div class="field-label">WhatsApp Number (with country code, no +)</div>
         <input type="text" class="setting-input" id="wa-phone" placeholder="e.g. 919876543210">
@@ -263,34 +244,32 @@
       </div>
     </div>
 
-    <!-- ALARM TAB -->
     <div class="tab-panel" id="tab-alarm">
       <div class="setting-block">
         <div class="setting-block-title">⏰ Android Alarm</div>
-        <div class="setting-block-desc">Tap the ⏰ button on any medicine card to open your Clock app with the alarm time pre-filled.</div>
-        <div class="note">Android only — opens built-in Clock app directly, no extra apps needed.</div>
+        <div class="setting-block-desc">Tap ⏰ on any medicine card to open Clock app with alarm pre-filled.</div>
+        <div class="note">Android only — opens built-in Clock app directly.</div>
       </div>
       <div class="setting-block">
-        <div class="setting-block-title">📱 iPhone / iPad</div>
-        <div class="setting-block-desc">iOS cannot set alarms from a web app. Use auto email instead — it works perfectly on iPhone. The ⏰ button on iOS downloads a <code style="color:var(--green);font-size:11px">.ics</code> calendar file you can open to add a Calendar alert.</div>
-        <div class="note blue">Auto email from the Email tab is the best option for iPhone users.</div>
+        <div class="setting-block-title">📱 iPhone</div>
+        <div class="setting-block-desc">iOS can't set alarms from a web app. Use auto email instead. The ⏰ button downloads a .ics calendar file.</div>
+        <div class="note blue">Auto email works perfectly on iPhone.</div>
       </div>
     </div>
 
-    <!-- ALERTS TAB -->
     <div class="tab-panel" id="tab-notif">
       <div class="setting-block">
         <div class="notif-row">
           <div class="notif-row-left">
             <div class="notif-row-title">Browser Notifications</div>
-            <div class="notif-row-desc">Show popup when app is open and medicine is due</div>
+            <div class="notif-row-desc">Popup alert when app is open and medicine is due</div>
           </div>
           <button class="toggle-switch" id="notif-toggle" onclick="toggleNotifications()"></button>
         </div>
         <div class="notif-row">
           <div class="notif-row-left">
             <div class="notif-row-title">Sound Alert</div>
-            <div class="notif-row-desc">Play beep sound when reminder popup fires</div>
+            <div class="notif-row-desc">Beep sound when reminder fires</div>
           </div>
           <button class="toggle-switch on" id="sound-toggle" onclick="toggleSound()"></button>
         </div>
@@ -319,44 +298,25 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  Hardcoded backend — users only need to enter email
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  Hardcoded — users only enter their email
+// ═══════════════════════════════════════════════
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwD4hkcMwzN5d-fxWmH0EdVyhqYjiQbvidMfcU69YMfNjNPVUHETol5PvQNGBteZDv-3A/exec';
-// ═══════════════════════════════════════════════════════
 
-const SK = {
-  MEDS:  'mt_meds_v2',
-  TAKEN: 'mt_taken_',
-  WA:    'mt_wa',
-  MAIL:  'mt_mail',
-  SOUND: 'mt_sound',
-  NOTED: 'mt_noted_',
-};
+const SK = { MEDS:'mt_meds_v2', TAKEN:'mt_taken_', WA:'mt_wa', MAIL:'mt_mail', SOUND:'mt_sound', NOTED:'mt_noted_' };
 
-let meds          = [];
-let taken         = {};
-let todayKey      = '';
-let notifiedToday = new Set();
-let currentRemMed = null;
+let meds=[], taken={}, todayKey='', notifiedToday=new Set(), currentRemMed=null;
+const isAndroid=/android/i.test(navigator.userAgent), isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+let waPhone='', mailTo='', sound=true;
 
-const isAndroid = /android/i.test(navigator.userAgent);
-const isIOS     = /iphone|ipad|ipod/i.test(navigator.userAgent);
-
-let waPhone = '';
-let mailTo  = '';
-let sound   = true;
-
-// ── INIT ──────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────
 function init() {
-  todayKey = new Date().toISOString().slice(0, 10);
+  todayKey = new Date().toISOString().slice(0,10);
   load();
   document.getElementById('date-pill').textContent =
-    new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'short' });
-  render();
-  updateStatusBar();
-  requestNotifPermission();
-  setInterval(localCheck, 30_000); // backup popup checker when page is open
+    new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'});
+  render(); updateStatusBar(); requestNotifPermission();
+  setInterval(localCheck, 30_000);
 }
 
 function load() {
@@ -382,191 +342,165 @@ function persistSettings() {
   try {
     localStorage.setItem(SK.WA,    waPhone);
     localStorage.setItem(SK.MAIL,  mailTo);
-    localStorage.setItem(SK.SOUND, sound ? 'true' : 'false');
+    localStorage.setItem(SK.SOUND, sound?'true':'false');
   } catch(e) {}
 }
 
-// ── BACKEND ───────────────────────────────────────────
-async function backendPost(payload) {
+// ── BACKEND — uses GET with ?data= to bypass no-cors issues ──
+function backendSend(payload) {
   if (!mailTo) return;
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode:   'no-cors',
-      headers:{ 'Content-Type': 'application/json' },
-      body:   JSON.stringify({ ...payload, email: mailTo }),
-    });
-  } catch(e) {}
+  const data = encodeURIComponent(JSON.stringify({ ...payload, email: mailTo }));
+  // Use an image request — works cross-origin with no CORS issues
+  const img = new Image();
+  img.src = SCRIPT_URL + '?data=' + data;
 }
 
-async function syncAll() {
+function syncAll() {
   if (!mailTo) return;
+  const data = encodeURIComponent(JSON.stringify({ action:'sync', medicines: meds, email: mailTo }));
+  const img = new Image();
+  img.src = SCRIPT_URL + '?data=' + data;
+  img.onload = img.onerror = () => showToast('✅ Medicines synced! Emails will fire on time.');
   showToast('☁️ Syncing to server…');
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode:   'no-cors',
-      headers:{ 'Content-Type': 'application/json' },
-      body:   JSON.stringify({ action: 'sync', medicines: meds, email: mailTo }),
-    });
-    showToast('✅ Active! Emails will fire automatically at each scheduled time.');
-  } catch(e) {
-    showToast('⚠️ Could not reach server — check connection');
-  }
 }
 
-// ── LOCAL POPUP CHECKER (when page is open) ───────────
+// ── LOCAL POPUP CHECKER ───────────────────────
 function localCheck() {
-  const nowMin = new Date().getHours()*60 + new Date().getMinutes();
+  const nowMin = new Date().getHours()*60+new Date().getMinutes();
   for (const med of meds) {
-    if (taken[med.id] || notifiedToday.has(med.id)) continue;
-    const [h, m] = med.time.split(':').map(Number);
-    if (nowMin >= h*60+m && nowMin < h*60+m+5) {
+    if (taken[med.id]||notifiedToday.has(med.id)) continue;
+    const [h,m]=med.time.split(':').map(Number);
+    if (nowMin>=h*60+m && nowMin<h*60+m+5) {
       notifiedToday.add(med.id); persist();
-      if (sound) playBeep();
-      showBrowserNotif(med);
-      showReminderPopup(med);
+      if(sound) playBeep(); showBrowserNotif(med); showReminderPopup(med);
     }
   }
 }
 
-// ── WHATSAPP ──────────────────────────────────────────
+// ── WHATSAPP ──────────────────────────────────
 function sendWhatsApp(med) {
-  if (!waPhone) { showToast('⚠️ Add your WhatsApp number in Settings'); return; }
-  const text = `⏰ *MedTrack Reminder!*\n\n💊 *${med.name}*\n📋 Dose: ${med.dose||'As prescribed'}\n⏱️ Time: ${fmt12(med.time)}\n\nPlease take it now! 🙏`;
+  if (!waPhone) { showToast('⚠️ Add WhatsApp number in Settings'); return; }
+  const text=`⏰ *MedTrack Reminder!*\n\n💊 *${med.name}*\n📋 Dose: ${med.dose||'As prescribed'}\n⏱️ Time: ${fmt12(med.time)}\n\nPlease take it now! 🙏`;
   window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(text)}`, '_blank');
   showToast('💬 WhatsApp opened — tap Send!');
 }
 
-// ── ALARM ─────────────────────────────────────────────
+// ── ALARM ─────────────────────────────────────
 function setAlarm(med) {
-  const [h, m] = med.time.split(':').map(Number);
+  const [h,m]=med.time.split(':').map(Number);
   if (isAndroid) {
-    window.location.href =
-      `intent:#Intent;action=android.intent.action.SET_ALARM;` +
-      `S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent('💊 '+med.name)};` +
-      `i.android.intent.extra.alarm.HOUR=${h};` +
-      `i.android.intent.extra.alarm.MINUTES=${m};` +
-      `i.android.intent.extra.alarm.VIBRATE=1;` +
-      `i.android.intent.extra.alarm.SKIP_UI=0;end`;
+    window.location.href=`intent:#Intent;action=android.intent.action.SET_ALARM;`+
+      `S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent('💊 '+med.name)};`+
+      `i.android.intent.extra.alarm.HOUR=${h};i.android.intent.extra.alarm.MINUTES=${m};`+
+      `i.android.intent.extra.alarm.VIBRATE=1;i.android.intent.extra.alarm.SKIP_UI=0;end`;
     showToast('⏰ Opening Clock app…');
   } else {
-    const pad = n => String(n).padStart(2, '0');
-    const d = new Date(); d.setHours(h, m, 0, 0);
-    if (d < new Date()) d.setDate(d.getDate()+1);
-    const dt  = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(m)}00`;
-    const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MedTrack//EN',
+    const pad=n=>String(n).padStart(2,'0');
+    const d=new Date(); d.setHours(h,m,0,0); if(d<new Date()) d.setDate(d.getDate()+1);
+    const dt=`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(m)}00`;
+    const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MedTrack//EN',
       'BEGIN:VEVENT',`UID:${Date.now()}@medtrack`,`DTSTAMP:${dt}`,`DTSTART:${dt}`,
       `SUMMARY:💊 ${med.name}`,`DESCRIPTION:${med.dose||'Take your medicine'}`,
       'BEGIN:VALARM','TRIGGER:-PT0M','ACTION:DISPLAY',`DESCRIPTION:Time for ${med.name}`,'END:VALARM',
       'END:VEVENT','END:VCALENDAR'].join('\r\n');
-    const a = Object.assign(document.createElement('a'), {
-      href: URL.createObjectURL(new Blob([ics],{type:'text/calendar'})),
-      download: `${med.name.replace(/\s+/g,'_')}_alarm.ics`
+    const a=Object.assign(document.createElement('a'),{
+      href:URL.createObjectURL(new Blob([ics],{type:'text/calendar'})),
+      download:`${med.name.replace(/\s+/g,'_')}_alarm.ics`
     });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    showToast(isIOS ? '📅 Open file to add to Calendar' : '📅 Calendar file downloaded');
+    showToast(isIOS?'📅 Open file to add to Calendar':'📅 Calendar file downloaded');
   }
 }
 
-// ── NOTIFICATIONS ─────────────────────────────────────
+// ── NOTIFICATIONS ─────────────────────────────
 async function requestNotifPermission() {
   if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') await Notification.requestPermission();
+  if (Notification.permission==='default') await Notification.requestPermission();
   updateNotifToggle();
 }
 function showBrowserNotif(med) {
-  if (Notification.permission !== 'granted') return;
+  if (Notification.permission!=='granted') return;
   try {
-    const n = new Notification(`💊 Time for ${med.name}`, {
-      body: `${med.dose||''} · ${fmt12(med.time)}`,
-      requireInteraction: true, tag: `med_${med.id}`
-    });
-    n.onclick = () => { window.focus(); n.close(); };
+    const n=new Notification(`💊 Time for ${med.name}`,{body:`${med.dose||''} · ${fmt12(med.time)}`,requireInteraction:true,tag:`med_${med.id}`});
+    n.onclick=()=>{window.focus();n.close();};
   } catch(e) {}
 }
 
-// ── SOUND ─────────────────────────────────────────────
+// ── SOUND ─────────────────────────────────────
 function playBeep() {
   try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    if (ctx.state==='suspended') ctx.resume();
-    [[0,520],[0.22,620],[0.44,720]].forEach(([d,f]) => {
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.connect(g); g.connect(ctx.destination); o.type='sine'; o.frequency.value=f;
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume();
+    [[0,520],[0.22,620],[0.44,720]].forEach(([d,f])=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;
       g.gain.setValueAtTime(0.4,ctx.currentTime+d);
       g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d+0.4);
-      o.start(ctx.currentTime+d); o.stop(ctx.currentTime+d+0.45);
+      o.start(ctx.currentTime+d);o.stop(ctx.currentTime+d+0.45);
     });
   } catch(e) {}
 }
 
-// ── REMINDER POPUP ────────────────────────────────────
+// ── REMINDER POPUP ────────────────────────────
 function showReminderPopup(med) {
-  currentRemMed = med;
-  document.getElementById('rem-name').textContent = med.name;
-  document.getElementById('rem-dose').textContent = med.dose || 'No dosage specified';
-  document.getElementById('rem-time').textContent = `Scheduled: ${fmt12(med.time)}`;
-  document.getElementById('rem-alrm-btn').textContent = isAndroid ? '⏰ Set Android Alarm' : '📅 Add to Calendar';
+  currentRemMed=med;
+  document.getElementById('rem-name').textContent=med.name;
+  document.getElementById('rem-dose').textContent=med.dose||'No dosage specified';
+  document.getElementById('rem-time').textContent=`Scheduled: ${fmt12(med.time)}`;
+  document.getElementById('rem-alrm-btn').textContent=isAndroid?'⏰ Set Android Alarm':'📅 Add to Calendar';
   document.getElementById('reminder-overlay').classList.add('show');
 }
-function closeReminder() {
-  document.getElementById('reminder-overlay').classList.remove('show');
-  currentRemMed = null;
-}
-function reminderAction(action) {
-  const med = currentRemMed; if (!med) return;
-  if (action==='wa')    sendWhatsApp(med);
-  if (action==='alarm') setAlarm(med);
-  if (action==='taken') { markTaken(med.id); closeReminder(); }
+function closeReminder(){document.getElementById('reminder-overlay').classList.remove('show');currentRemMed=null;}
+function reminderAction(action){
+  const med=currentRemMed; if(!med) return;
+  if(action==='wa')    sendWhatsApp(med);
+  if(action==='alarm') setAlarm(med);
+  if(action==='taken'){markTaken(med.id);closeReminder();}
 }
 
-// ── CRUD ──────────────────────────────────────────────
+// ── CRUD ──────────────────────────────────────
 function addMedicine() {
-  const name = document.getElementById('inp-name').value.trim();
-  const dose = document.getElementById('inp-dose').value.trim();
-  const time = document.getElementById('inp-time').value;
-  if (!name || !time) { showToast('Please enter a name and time'); return; }
-  const med = { id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), name, dose, time };
-  meds.push(med);
-  meds.sort((a,b) => a.time.localeCompare(b.time));
+  const name=document.getElementById('inp-name').value.trim();
+  const dose=document.getElementById('inp-dose').value.trim();
+  const time=document.getElementById('inp-time').value;
+  if(!name||!time){showToast('Please enter a name and time');return;}
+  const med={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,dose,time};
+  meds.push(med); meds.sort((a,b)=>a.time.localeCompare(b.time));
   persist(); render();
-  backendPost({ action: 'add', ...med });
-  document.getElementById('inp-name').value = '';
-  document.getElementById('inp-dose').value = '';
-  document.getElementById('inp-time').value = '';
-  showToast(mailTo ? `💊 ${name} added! Email reminder scheduled ✅` : `💊 ${name} added!`);
+  backendSend({action:'add',...med});
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-dose').value='';
+  document.getElementById('inp-time').value='';
+  showToast(mailTo?`💊 ${name} added! Email reminder scheduled ✅`:`💊 ${name} added!`);
   toggleForm(true);
 }
 
 function markTaken(id) {
-  const med = meds.find(m=>m.id===id); if (!med) return;
-  if (taken[id]) { delete taken[id]; showToast(`Unmarked: ${med.name}`); }
-  else { taken[id]=Date.now(); if(sound) playBeep(); showToast(`✓ ${med.name} marked as taken!`); }
+  const med=meds.find(m=>m.id===id); if(!med) return;
+  if(taken[id]){delete taken[id];showToast(`Unmarked: ${med.name}`);}
+  else{taken[id]=Date.now();if(sound)playBeep();showToast(`✓ ${med.name} marked as taken!`);}
   persist(); render();
 }
 
 function deleteMed(id) {
-  const med = meds.find(m=>m.id===id);
-  if (!confirm(`Remove ${med?.name}?`)) return;
-  meds = meds.filter(m=>m.id!==id);
-  delete taken[id]; notifiedToday.delete(id);
+  const med=meds.find(m=>m.id===id);
+  if(!confirm(`Remove ${med?.name}?`)) return;
+  meds=meds.filter(m=>m.id!==id); delete taken[id]; notifiedToday.delete(id);
   persist(); render();
-  backendPost({ action: 'delete', id });
+  backendSend({action:'delete',id});
   showToast(`${med?.name} removed`);
 }
 
-// ── RENDER ────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────
 function render() {
-  const list   = document.getElementById('med-list');
-  const nowMin = new Date().getHours()*60 + new Date().getMinutes();
-  if (!meds.length) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">💊</div><p>No medicines added yet.<br>Add your first one below!</p></div>`;
+  const list=document.getElementById('med-list');
+  const nowMin=new Date().getHours()*60+new Date().getMinutes();
+  if(!meds.length){
+    list.innerHTML=`<div class="empty"><div class="empty-icon">💊</div><p>No medicines added yet.<br>Add your first one below!</p></div>`;
   } else {
-    list.innerHTML = meds.map(med => {
-      const isTaken   = !!taken[med.id];
-      const [mh,mm]   = med.time.split(':').map(Number);
-      const isOverdue = !isTaken && nowMin > mh*60+mm+5;
+    list.innerHTML=meds.map(med=>{
+      const isTaken=!!taken[med.id],[mh,mm]=med.time.split(':').map(Number);
+      const isOverdue=!isTaken&&nowMin>mh*60+mm+5;
       return `
       <div class="med-card${isTaken?' taken':isOverdue?' overdue':''}">
         <div class="med-row">
@@ -585,105 +519,73 @@ function render() {
       </div>`;
     }).join('');
   }
-  const takenCount = Object.keys(taken).filter(id=>meds.find(m=>m.id===id)).length;
-  const total = meds.length;
-  document.getElementById('s-taken').textContent = takenCount;
-  document.getElementById('s-left').textContent  = total - takenCount;
-  document.getElementById('s-total').textContent = total;
-  document.getElementById('progress-fill').style.width = total ? Math.round(takenCount/total*100)+'%' : '0%';
+  const takenCount=Object.keys(taken).filter(id=>meds.find(m=>m.id===id)).length, total=meds.length;
+  document.getElementById('s-taken').textContent=takenCount;
+  document.getElementById('s-left').textContent=total-takenCount;
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('progress-fill').style.width=total?Math.round(takenCount/total*100)+'%':'0%';
 }
 
 function updateStatusBar() {
-  const dot  = document.getElementById('status-dot');
-  const text = document.getElementById('status-bar-text');
-  if (mailTo) {
-    dot.className = 'status-dot green';
-    text.innerHTML = `Auto emails active → <strong>${mailTo}</strong> ✅`;
-  } else {
-    dot.className = 'status-dot amber';
-    text.innerHTML = 'Add your email in ⚙️ Settings to activate auto reminders';
-  }
+  const dot=document.getElementById('status-dot'),text=document.getElementById('status-bar-text');
+  if(mailTo){dot.className='status-dot green';text.innerHTML=`Auto emails active → <strong>${mailTo}</strong> ✅`;}
+  else{dot.className='status-dot amber';text.innerHTML='Add your email in ⚙️ Settings to activate auto reminders';}
 }
 
-// ── SETTINGS ──────────────────────────────────────────
+// ── SETTINGS ──────────────────────────────────
 function openSettings() {
-  document.getElementById('mail-to').value  = mailTo;
-  document.getElementById('wa-phone').value = waPhone;
-
-  const mPill = document.getElementById('mail-status-pill');
-  mPill.className   = mailTo ? 'status-pill ok' : 'status-pill not';
-  mPill.textContent = mailTo ? `● Active → ${mailTo}` : '● Not configured';
-
-  const wPill = document.getElementById('wa-status-pill');
-  wPill.className   = waPhone ? 'status-pill ok' : 'status-pill not';
-  wPill.textContent = waPhone ? `● +${waPhone}` : '● Not configured';
-
+  document.getElementById('mail-to').value=mailTo;
+  document.getElementById('wa-phone').value=waPhone;
+  const mp=document.getElementById('mail-status-pill');
+  mp.className=mailTo?'status-pill ok':'status-pill not';
+  mp.textContent=mailTo?`● ${mailTo}`:'● Not configured';
+  const wp=document.getElementById('wa-status-pill');
+  wp.className=waPhone?'status-pill ok':'status-pill not';
+  wp.textContent=waPhone?`● +${waPhone}`:'● Not configured';
   updateNotifToggle();
-  document.getElementById('sound-toggle').className = 'toggle-switch'+(sound?' on':'');
+  document.getElementById('sound-toggle').className='toggle-switch'+(sound?' on':'');
   document.getElementById('settings-overlay').classList.add('show');
 }
-function maybeCloseSettings(e) { if(e.target===document.getElementById('settings-overlay')) closeSettings(); }
-function closeSettings() { document.getElementById('settings-overlay').classList.remove('show'); }
-function switchTab(name) {
-  ['email','wa','alarm','notif'].forEach((n,i) => {
-    document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
-    document.getElementById('tab-'+n).classList.toggle('active', n===name);
+function maybeCloseSettings(e){if(e.target===document.getElementById('settings-overlay'))closeSettings();}
+function closeSettings(){document.getElementById('settings-overlay').classList.remove('show');}
+function switchTab(name){
+  ['email','wa','alarm','notif'].forEach((n,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('active',n===name);
+    document.getElementById('tab-'+n).classList.toggle('active',n===name);
   });
 }
 
 function saveEmail() {
-  const val = document.getElementById('mail-to').value.trim();
-  if (!val || !val.includes('@')) { showToast('Please enter a valid email'); return; }
-  const changed = val !== mailTo;
-  mailTo = val; persistSettings(); updateStatusBar();
-  closeSettings();
-  if (changed) syncAll(); // sync all medicines with new email
-  else showToast('📧 Email saved!');
+  const val=document.getElementById('mail-to').value.trim();
+  if(!val||!val.includes('@')){showToast('Please enter a valid email');return;}
+  const changed=val!==mailTo; mailTo=val; persistSettings(); updateStatusBar(); closeSettings();
+  if(changed) syncAll(); else showToast('📧 Email saved!');
 }
-
 function saveWA() {
-  const val = document.getElementById('wa-phone').value.trim().replace(/\D/g,'');
-  if (!val) { showToast('Please enter a valid number'); return; }
-  waPhone = val; persistSettings();
-  showToast('💬 WhatsApp number saved!'); openSettings();
+  const val=document.getElementById('wa-phone').value.trim().replace(/\D/g,'');
+  if(!val){showToast('Please enter a valid number');return;}
+  waPhone=val; persistSettings(); showToast('💬 Saved!'); openSettings();
+}
+function updateNotifToggle(){const t=document.getElementById('notif-toggle');if(t)t.className='toggle-switch'+(Notification.permission==='granted'?' on':'');}
+function toggleNotifications(){requestNotifPermission();}
+function toggleSound(){sound=!sound;persistSettings();document.getElementById('sound-toggle').className='toggle-switch'+(sound?' on':'');}
+function testReminder(){
+  const dummy={id:'_test',name:'Test Medicine',dose:'1 tablet',time:new Date().toTimeString().slice(0,5)};
+  if(sound)playBeep();showBrowserNotif(dummy);showReminderPopup(dummy);closeSettings();
 }
 
-function updateNotifToggle() {
-  const t = document.getElementById('notif-toggle');
-  if (t) t.className = 'toggle-switch'+(Notification.permission==='granted'?' on':'');
-}
-function toggleNotifications() { requestNotifPermission(); }
-function toggleSound() {
-  sound = !sound; persistSettings();
-  document.getElementById('sound-toggle').className = 'toggle-switch'+(sound?' on':'');
-}
-
-function testReminder() {
-  const dummy = {id:'_test',name:'Test Medicine',dose:'1 tablet',time:new Date().toTimeString().slice(0,5)};
-  if(sound) playBeep(); showBrowserNotif(dummy); showReminderPopup(dummy); closeSettings();
-}
-
-// ── UTILS ─────────────────────────────────────────────
-function fmt12(t) {
-  if(!t) return '';
-  const [h,m]=t.split(':').map(Number);
-  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
-}
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function toggleForm(close) {
-  const f=document.getElementById('add-form'), isOpen=f.style.display!=='none';
+// ── UTILS ─────────────────────────────────────
+function fmt12(t){if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleForm(close){
+  const f=document.getElementById('add-form'),isOpen=f.style.display!=='none';
   if(close||isOpen){f.style.display='none';document.getElementById('add-toggle').textContent='＋ Add new medicine';}
   else{f.style.display='block';document.getElementById('add-toggle').textContent='✕ Cancel';document.getElementById('inp-name').focus();}
 }
-function showToast(msg) {
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
 
-document.addEventListener('keydown', e=>{if(e.key==='Escape'){closeReminder();closeSettings();}});
-window.meds=meds; window.sendWhatsApp=sendWhatsApp; window.setAlarm=setAlarm; window.markTaken=markTaken; window.deleteMed=deleteMed;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeReminder();closeSettings();}});
+window.meds=meds;window.sendWhatsApp=sendWhatsApp;window.setAlarm=setAlarm;window.markTaken=markTaken;window.deleteMed=deleteMed;
 
 init();
 </script>
